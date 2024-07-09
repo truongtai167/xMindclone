@@ -29,8 +29,9 @@ class XMind {
         this.sheets = sheets;
     }
 
-    addSheet(sheet: Sheet) {
-        this.sheets.push(sheet);
+    addSheet() {
+        const sheets = new Sheet()
+        this.sheets.push(sheets);
     }
 
     removeSheet(sheet: Sheet) {
@@ -313,7 +314,6 @@ class PDFExporter implements IExporter {
 //         }
 //     }
 // }
-
 
 
 export { Nodee, Relationship, Position, Shape, Color, Text, Sheet, XMind, PNGExporter, PDFExporter }

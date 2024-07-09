@@ -13,15 +13,13 @@ describe("xMind test", () => {
         expect(xMind.sheets[0].rootNode.child.length).toBe(4)
     })
     test('add new sheet to the mindmap', () => {
-        const newsheet = new Sheet()
-        xMind.addSheet(newsheet)
-        expect(xMind.sheets).toContain(newsheet)
+        xMind.addSheet()
+        expect(xMind.sheets.length).toBe(2)
     })
     test('remove sheet from the mindmap', () => {
-        const newsheet = new Sheet()
-        xMind.addSheet(newsheet)
-        xMind.removeSheet(newsheet)
-        expect(xMind.sheets).not.toContain(newsheet)
+        xMind.addSheet()
+        xMind.removeSheet(xMind.sheets[1])
+        expect(xMind.sheets).not.toContain(xMind.sheets[1])
     })
 
     test('should duplicated sheet', () => {
@@ -116,6 +114,6 @@ describe("xMind test", () => {
     })
     test('should export sheet to PDF', () => {
         const result = xMind.exportSheet(xMind.sheets[0], new PDFExporter())
-        expect(result).toBe(`${xMind.sheets[0].name}.png`)
+        expect(result).toBe(`${xMind.sheets[0].name}.pdf`)
     })
 })
