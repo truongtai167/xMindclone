@@ -18,6 +18,9 @@ interface IShape {
 interface IColor {
     changeColor(color: string): void
 }
+interface IExporter {
+    export(sheet: Sheet): string
+}
 
 class XMind {
     public sheets: Sheet[];
@@ -34,13 +37,16 @@ class XMind {
         this.sheets = this.sheets.filter(s => s !== sheet);
     }
     duplicateSheet(sheet: Sheet): Sheet {
-        const copySheet = new Sheet(
+        const duplicatedSheet = new Sheet(
             sheet.rootNode,
             sheet.floatingNode,
             sheet.relationship,
             `${sheet.name} - Copy`,);
-        this.sheets.push(copySheet);
-        return copySheet;
+        this.sheets.push(duplicatedSheet);
+        return duplicatedSheet;
+    }
+    exportSheet(sheet: Sheet, exporter: IExporter) {
+        return exporter.export(sheet)
     }
 }
 
@@ -271,6 +277,18 @@ class NodeFactory {
     }
 }
 
+class PNGExporter implements IExporter {
+    export(sheet: Sheet): string {
+        return `${sheet.name}.png`
+    }
+}
+
+class PDFExporter implements IExporter {
+    export(sheet: Sheet): string {
+        return `${sheet.name}.pdf`
+    }
+}
+
 // class Theme {
 //     public color: Color
 //     public shape: Shape
@@ -298,18 +316,4 @@ class NodeFactory {
 
 
 
-
-const xMind = new XMind()
-xMind.addSheet(new Sheet())
-const nodechau = new Nodee()
-xMind.sheets[0].rootNode.child[0].addChild(nodechau)
-nodechau.changeParentNode(xMind.sheets[0].rootNode)
-
-const duplicateNode = nodechau.duplicate()
-
-console.log(nodechau)
-console.log(duplicateNode)
-
-
-
-export { Nodee, Relationship, Position, Shape, Color, Text, Sheet, XMind }
+export { Nodee, Relationship, Position, Shape, Color, Text, Sheet, XMind, PNGExporter, PDFExporter }

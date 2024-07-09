@@ -1,4 +1,4 @@
-import { Nodee, Sheet, XMind } from "./xMind"
+import { Nodee, Sheet, XMind, PNGExporter, PDFExporter } from "./xMind"
 
 describe("xMind test", () => {
     let xMind: XMind
@@ -101,13 +101,18 @@ describe("xMind test", () => {
         xMind.sheets[0].relationship[0].changeTextSize(30)
         expect(xMind.sheets[0].relationship[0].text.size).toBe(30)
     })
-    test('should change parent node and parent node should update child', () => {
+    test('should change parent node and new parent node should update child', () => {
         const nodechau = new Nodee()
         xMind.sheets[0].rootNode.child[0].addChild(nodechau)
         nodechau.changeParentNode(xMind.sheets[0].rootNode)
         expect(nodechau.parentNode).toBe(xMind.sheets[0].rootNode)
         expect(xMind.sheets[0].rootNode.child).toContain(nodechau)
-    })
+        expect(xMind.sheets[0].rootNode.child.length).toBe(5)
 
+    })
+    test('should export sheet to PNG', () => {
+        const result = xMind.exportSheet(xMind.sheets[0], new PNGExporter())
+        expect(result).toBe(`${xMind.sheets[0].name}.png`)
+    })
 
 })
