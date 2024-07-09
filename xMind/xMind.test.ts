@@ -114,5 +114,8 @@ describe("xMind test", () => {
         const result = xMind.exportSheet(xMind.sheets[0], new PNGExporter())
         expect(result).toBe(`${xMind.sheets[0].name}.png`)
     })
-
+    test('should export sheet to PDF', () => {
+        const result = xMind.exportSheet(xMind.sheets[0], new PDFExporter())
+        expect(result).toBe(`${xMind.sheets[0].name}.png`)
+    })
 })
