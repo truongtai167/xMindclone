@@ -83,6 +83,7 @@ describe("xMind test", () => {
     test('should have relationship', () => {
         xMind.sheets[0].addRelationship(xMind.sheets[0].rootNode.child[0], xMind.sheets[0].rootNode)
         expect(xMind.sheets[0].relationship.length).toBe(1)
+        expect(xMind.sheets[0].relationship[0].text.content).toBe('Relationship')
     })
     test('should remove relationship', () => {
         xMind.sheets[0].addRelationship(xMind.sheets[0].rootNode.child[0], xMind.sheets[0].rootNode)

@@ -76,8 +76,8 @@ class Sheet {
         this.name = name
     }
 
-    addRelationship(fromNode: Nodee, toNode: Nodee, color: Color = new Color(), text: Text = new Text(13, 'Arial', 'Relationship')) {
-        const relationship = new Relationship(fromNode, toNode, color, text);
+    addRelationship(fromNode: Nodee, toNode: Nodee) {
+        const relationship = new Relationship(fromNode, toNode);
         this.relationship.push(relationship);
     }
     removeRelationship(fromNode: Nodee, toNode: Nodee) {
