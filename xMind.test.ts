@@ -1,4 +1,4 @@
-import { Nodee, Relationship, Position, Shape, Color, Text, Sheet, XMind } from "./xMind"
+import { Nodee, Sheet, XMind } from "./xMind"
 
 describe("xMind test", () => {
     let xMind: XMind
