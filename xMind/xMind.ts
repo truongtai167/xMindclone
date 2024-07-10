@@ -1,23 +1,7 @@
 import { defaultConfig } from "../config"
+import _ from 'lodash'
 
-interface INode {
-    addChild(node: INode): void
-    removeChild(node: INode): void
-    changeParentNode(newParent: Nodee | null): void
-    duplicate(): Nodee
-}
-interface IText {
-    changeText(text: string): void
-    changeTextSize(size: number): void
-}
 
-interface IShape {
-    changeShape(name: string): void
-}
-
-interface IColor {
-    changeColor(color: string): void
-}
 interface IExporter {
     export(sheet: Sheet): string
 }
@@ -37,84 +21,78 @@ class XMind {
     removeSheet(sheet: Sheet) {
         this.sheets = this.sheets.filter(s => s !== sheet);
     }
+
     duplicateSheet(sheet: Sheet): Sheet {
         const duplicatedSheet = new Sheet(
-            sheet.rootNode,
-            sheet.floatingNode,
-            sheet.relationship,
-            `${sheet.name} - Copy`,);
+            _.cloneDeep(sheet.rootNode),
+            _.cloneDeep(sheet.floatingNodes),
+            _.cloneDeep(sheet.relationships),
+            `${sheet.name} - Copy`
+        );
         this.sheets.push(duplicatedSheet);
         return duplicatedSheet;
     }
+
     exportSheet(sheet: Sheet, exporter: IExporter) {
         return exporter.export(sheet)
     }
 }
 
 class Sheet {
-    public rootNode: Nodee;
-    public floatingNode: Nodee[];
-    public relationship: Relationship[];
+    public rootNode: Topic;
+    public floatingNodes: Topic[];
+    public relationships: Relationship[];
     public name: string
-    // public theme: Theme
 
-    constructor(rootNode: Nodee = NodeFactory.createDefaultRootNode(), otherNode: Nodee[] = [], relationship: Relationship[] = [], name: string = 'Mind Map') {
+    constructor(rootNode: Topic = NodeFactory.createDefaultRootNode(), floatingNodes: Topic[] = [],
+        relationships: Relationship[] = [], name: string = 'Mind Map') {
         this.rootNode = rootNode;
-        this.floatingNode = otherNode;
-        this.relationship = relationship;
+        this.floatingNodes = floatingNodes;
+        this.relationships = relationships;
         this.name = name
-        // this.theme = theme
     }
 
     addFloatingNode() {
-        const floatingNode = new Nodee(
+        const floatingNode = new Topic(
             new Position(),
             new Shape(),
             new Color(defaultConfig.floatingNode.color.name),
-            new Text(defaultConfig.floatingNode.text.size, defaultConfig.floatingNode.text.style, defaultConfig.floatingNode.text.content)
+            new Text(defaultConfig.floatingNode.text.size,
+                defaultConfig.floatingNode.text.style, defaultConfig.floatingNode.text.content)
         );
-        this.floatingNode.push(floatingNode);
+        this.floatingNodes.push(floatingNode);
     }
 
-    removeFloatingNode(node: Nodee) {
-        this.floatingNode = this.floatingNode.filter(n => n !== node);
+    removeFloatingNode(node: Topic) {
+        this.floatingNodes = this.floatingNodes.filter(n => n !== node);
     }
     renameSheet(name: string) {
         this.name = name
     }
 
-    addRelationship(fromNode: Nodee, toNode: Nodee) {
+    addRelationship(fromNode: Topic, toNode: Topic) {
         const relationship = new Relationship(fromNode, toNode);
-        this.relationship.push(relationship);
+        this.relationships.push(relationship);
     }
-    removeRelationship(fromNode: Nodee, toNode: Nodee) {
-        this.relationship = this.relationship.filter(rel => !(rel.fromNode === fromNode && rel.toNode === toNode));
+    removeRelationship(fromNode: Topic, toNode: Topic) {
+        this.relationships = this.relationships.filter(rel => !(rel.fromNode === fromNode && rel.toNode === toNode));
     }
 
-    // applyThemeToNode(node: Nodee) {
-    //     this.theme.applyTheme(node);
-    //     node.child.forEach(childNode => {
-    //         this.applyThemeToNode(childNode);
-    //     });
-    // }
-    // applyThemeToMap() {
-    //     this.applyThemeToNode(this.rootNode);
-    // }
 }
 
-class Nodee implements INode, IText, IColor, IShape {
-    public child: Nodee[];
+class Topic {
+    public child: Topic[];
     public color: Color;
     public shape: Shape;
     public position: Position;
     public text: Text;
-    public parentNode: Nodee | null;
+    public parentNode: Topic | null;
     constructor(
         position: Position = new Position(),
         shape: Shape = new Shape(),
         color: Color = new Color(),
         text: Text = new Text(),
-        parentNode: Nodee | null = null
+        parentNode: Topic | null = null
     ) {
         this.child = [];
         this.position = position;
@@ -124,12 +102,12 @@ class Nodee implements INode, IText, IColor, IShape {
         this.parentNode = parentNode;
     }
 
-    addChild(node: Nodee) {
+    addChild(node: Topic) {
         node.parentNode = this
         this.child.push(node);
     }
 
-    removeChild(node: Nodee) {
+    removeChild(node: Topic) {
         this.child = this.child.filter(n => n !== node);
         node.parentNode = null;
     }
@@ -149,7 +127,7 @@ class Nodee implements INode, IText, IColor, IShape {
     changeTextSize(size: number) {
         this.text.changeTextSize(size);
     }
-    changeParentNode(newParent: Nodee | null) {
+    changeParentNode(newParent: Topic | null) {
         // Remove from current parent's child list, if exists
         this.parentNode?.removeChild(this);
 
@@ -160,30 +138,20 @@ class Nodee implements INode, IText, IColor, IShape {
         newParent?.addChild(this);
     }
 
-    duplicate(): Nodee {
-        const duplicateNode = new Nodee(
-            new Position(this.position.x, this.position.y),
-            new Shape(this.shape.name),
-            new Color(this.color.name),
-            new Text(this.text.size, this.text.style, this.text.content),
-            this.parentNode
-        );
-        this.child.forEach(childNode => {
-            const duplicatedChild = childNode.duplicate();
-            duplicateNode.addChild(duplicatedChild)
-        });
+    duplicate(): Topic {
+        const duplicateNode = _.cloneDeep(this)
         this.parentNode?.addChild(duplicateNode)
         return duplicateNode
     }
 }
 
-class Relationship implements IText, IColor {
-    public fromNode: Nodee
-    public toNode: Nodee
+class Relationship {
+    public fromNode: Topic
+    public toNode: Topic
     public color: Color
     public text: Text
 
-    constructor(fromNode: Nodee, toNode: Nodee, color: Color = new Color(), text: Text = new Text(defaultConfig.relationship.text.size, defaultConfig.relationship.text.style, defaultConfig.relationship.text.content)) {
+    constructor(fromNode: Topic, toNode: Topic, color: Color = new Color(), text: Text = new Text(defaultConfig.relationship.text.size, defaultConfig.relationship.text.style, defaultConfig.relationship.text.content)) {
         this.fromNode = fromNode
         this.toNode = toNode
         this.color = color
@@ -211,7 +179,7 @@ class Position {
         this.y = y
     }
 }
-class Shape implements IShape {
+class Shape {
     public name: string
     public fill: boolean
     public border: boolean
@@ -225,7 +193,7 @@ class Shape implements IShape {
         this.name = name
     }
 }
-class Color implements IColor {
+class Color {
     public name: string
 
     constructor(name: string = 'Black') {
@@ -237,7 +205,7 @@ class Color implements IColor {
     }
 }
 
-class Text implements IText {
+class Text {
     public content: string
     public size: number
     public style: string
@@ -257,8 +225,8 @@ class Text implements IText {
 }
 
 class NodeFactory {
-    static createDefaultRootNode(): Nodee {
-        const rootNode = new Nodee(
+    static createDefaultRootNode(): Topic {
+        const rootNode = new Topic(
             new Position(),
             new Shape(),
             new Color(defaultConfig.rootNode.color.name),
@@ -267,7 +235,7 @@ class NodeFactory {
                 defaultConfig.rootNode.text.content)
         );
         defaultConfig.mainTopics.forEach(topic => {
-            rootNode.addChild(new Nodee(
+            rootNode.addChild(new Topic(
                 new Position(),
                 new Shape(),
                 new Color(topic.color),
@@ -290,30 +258,11 @@ class PDFExporter implements IExporter {
     }
 }
 
-// class Theme {
-//     public color: Color
-//     public shape: Shape
-//     public text: Text
 
 
-//     constructor(color: Color, shape: Shape, text: Text) {
-//         this.color = color
-//         this.shape = shape
-//         this.text = text
-//     }
-
-//     applyTheme(node: INode) {
-//         if (node.changeColor) {
-//             node.changeColor(this.color.name);
-//         }
-//         if (node.changeShape) {
-//             node.changeShape(this.shape.name);
-//         }
-//         if (node.changeText) {
-//             node.changeText(this.text.content);
-//         }
-//     }
-// }
 
 
-export { Nodee, Relationship, Position, Shape, Color, Text, Sheet, XMind, PNGExporter, PDFExporter }
+
+
+
+export { Topic, Relationship, Position, Shape, Color, Text, Sheet, XMind, PNGExporter, PDFExporter }
