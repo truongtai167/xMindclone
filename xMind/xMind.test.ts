@@ -33,13 +33,13 @@ describe("xMind test", () => {
 
     test('add floating node to the sheet', () => {
         xMind.sheets[0].addFloatingNode();
-        expect(xMind.sheets[0].floatingNodes.length).toBe(1);
+        expect(xMind.sheets[0].floatingTopics.length).toBe(1);
     });
 
     test('delete floating node from the sheet', () => {
         xMind.sheets[0].addFloatingNode();
-        xMind.sheets[0].removeFloatingNode(xMind.sheets[0].floatingNodes[0])
-        expect(xMind.sheets[0].floatingNodes.length).toBe(0);
+        xMind.sheets[0].removeFloatingNode(xMind.sheets[0].floatingTopics[0])
+        expect(xMind.sheets[0].floatingTopics.length).toBe(0);
     });
 
     test('rename sheet', () => {
@@ -83,30 +83,30 @@ describe("xMind test", () => {
     })
     test('should have relationship', () => {
         xMind.sheets[0].addRelationship(xMind.sheets[0].rootNode.child[0], xMind.sheets[0].rootNode)
-        expect(xMind.sheets[0].relationships.length).toBe(1)
-        expect(xMind.sheets[0].relationships[0].text.content).toBe('Relationship')
+        expect(xMind.sheets[0].rels.length).toBe(1)
+        expect(xMind.sheets[0].rels[0].text.content).toBe('Relationship')
     })
     test('should remove relationship', () => {
         xMind.sheets[0].addRelationship(xMind.sheets[0].rootNode.child[0], xMind.sheets[0].rootNode)
         xMind.sheets[0].removeRelationship(xMind.sheets[0].rootNode.child[0], xMind.sheets[0].rootNode)
-        expect(xMind.sheets[0].relationships.length).toBe(0)
+        expect(xMind.sheets[0].rels.length).toBe(0)
     })
 
     test('change relationship text', () => {
         xMind.sheets[0].addRelationship(xMind.sheets[0].rootNode.child[0], xMind.sheets[0].rootNode)
-        xMind.sheets[0].relationships[0].changeText('abc')
-        expect(xMind.sheets[0].relationships[0].text.content).toBe('abc')
+        xMind.sheets[0].rels[0].changeText('abc')
+        expect(xMind.sheets[0].rels[0].text.content).toBe('abc')
     })
     test('change relationship textsize', () => {
         xMind.sheets[0].addRelationship(xMind.sheets[0].rootNode.child[0], xMind.sheets[0].rootNode)
-        xMind.sheets[0].relationships[0].changeTextSize(30)
-        expect(xMind.sheets[0].relationships[0].text.size).toBe(30)
+        xMind.sheets[0].rels[0].changeTextSize(30)
+        expect(xMind.sheets[0].rels[0].text.size).toBe(30)
     })
     test('should change parent node and new parent node should update child', () => {
         const nodechau = new Topic()
         xMind.sheets[0].rootNode.child[0].addChild(nodechau)
         nodechau.changeParentNode(xMind.sheets[0].rootNode)
-        expect( xMind.sheets[0].rootNode.child[0].child.length).toBe(0)
+        expect(xMind.sheets[0].rootNode.child[0].child.length).toBe(0)
         expect(nodechau.parentNode).toBe(xMind.sheets[0].rootNode)
         expect(xMind.sheets[0].rootNode.child).toContain(nodechau)
         expect(xMind.sheets[0].rootNode.child.length).toBe(5)

@@ -23,12 +23,14 @@ class XMind {
     }
 
     duplicateSheet(sheet: Sheet): Sheet {
-        const duplicatedSheet = new Sheet(
-            _.cloneDeep(sheet.rootNode),
-            _.cloneDeep(sheet.floatingNodes),
-            _.cloneDeep(sheet.relationships),
-            `${sheet.name} - Copy`
-        );
+        const duplicatedSheet = _.cloneDeep(sheet);
+        duplicatedSheet.name = `${sheet.name} - Copy`;
+        // const duplicatedSheet = new Sheet(
+        // _.cloneDeep(sheet.rootNode),
+        // _.cloneDeep(sheet.floatingTopics),
+        // _.cloneDeep(sheet.rels),
+        // `${sheet.name} - Copy`
+        // );
         this.sheets.push(duplicatedSheet);
         return duplicatedSheet;
     }
@@ -40,15 +42,15 @@ class XMind {
 
 class Sheet {
     public rootNode: Topic;
-    public floatingNodes: Topic[];
-    public relationships: Relationship[];
+    public floatingTopics: Topic[];
+    public rels: Relationship[];
     public name: string
 
-    constructor(rootNode: Topic = NodeFactory.createDefaultRootNode(), floatingNodes: Topic[] = [],
-        relationships: Relationship[] = [], name: string = 'Mind Map') {
+    constructor(rootNode: Topic = NodeFactory.createDefaultRootNode(), floatingTopics: Topic[] = [],
+        rels: Relationship[] = [], name: string = 'Mind Map') {
         this.rootNode = rootNode;
-        this.floatingNodes = floatingNodes;
-        this.relationships = relationships;
+        this.floatingTopics = floatingTopics;
+        this.rels = rels;
         this.name = name
     }
 
@@ -60,11 +62,11 @@ class Sheet {
             new Text(defaultConfig.floatingNode.text.size,
                 defaultConfig.floatingNode.text.style, defaultConfig.floatingNode.text.content)
         );
-        this.floatingNodes.push(floatingNode);
+        this.floatingTopics.push(floatingNode);
     }
 
     removeFloatingNode(node: Topic) {
-        this.floatingNodes = this.floatingNodes.filter(n => n !== node);
+        this.floatingTopics = this.floatingTopics.filter(n => n !== node);
     }
     renameSheet(name: string) {
         this.name = name
@@ -72,10 +74,10 @@ class Sheet {
 
     addRelationship(fromNode: Topic, toNode: Topic) {
         const relationship = new Relationship(fromNode, toNode);
-        this.relationships.push(relationship);
+        this.rels.push(relationship);
     }
     removeRelationship(fromNode: Topic, toNode: Topic) {
-        this.relationships = this.relationships.filter(rel => !(rel.fromNode === fromNode && rel.toNode === toNode));
+        this.rels = this.rels.filter(rel => !(rel.fromNode === fromNode && rel.toNode === toNode));
     }
 
 }
@@ -151,7 +153,9 @@ class Relationship {
     public color: Color
     public text: Text
 
-    constructor(fromNode: Topic, toNode: Topic, color: Color = new Color(), text: Text = new Text(defaultConfig.relationship.text.size, defaultConfig.relationship.text.style, defaultConfig.relationship.text.content)) {
+    constructor(fromNode: Topic, toNode: Topic, color: Color = new Color(),
+        text: Text = new Text(defaultConfig.relationship.text.size,
+            defaultConfig.relationship.text.style, defaultConfig.relationship.text.content)) {
         this.fromNode = fromNode
         this.toNode = toNode
         this.color = color
