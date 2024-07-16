@@ -1,22 +1,22 @@
 import { Template } from "./Template";
-import { Column, ColumnType } from "./Column";
+import { Column, ColumnType, DateColumn, HyperlinkColumn, NumberColumn, TextColumn } from "./Column";
 
 class TemplateService {
     static initializeDefaultTemplates(): Template[] {
         return [
             new Template("Project Template", [
-                new Column("Task", ColumnType.Text),
-                new Column("Due Date", ColumnType.Date)
+                new TextColumn("Task"),
+                new DateColumn("Due Date")
             ]),
             new Template("Contact List Template", [
-                new Column("Name", ColumnType.Text),
-                new Column("Email", ColumnType.Hyperlink),
-                new Column("Phone Number", ColumnType.Text)
+                new TextColumn("Name"),
+                new HyperlinkColumn("Email"),
+                new TextColumn("Phone Number")
             ]),
             new Template("Inventory Template", [
-                new Column("Item", ColumnType.Text),
-                new Column("Quantity", ColumnType.Number),
-                new Column("Price", ColumnType.Text)
+                new TextColumn("Item"),
+                new NumberColumn("Quantity"),
+                new TextColumn("Price")
             ])
         ];
     }

@@ -1,8 +1,8 @@
-class Commentt {
+class Comment {
     public content: string
 
     constructor(content: string) {
         this.content = content
     }
 }
-export { Commentt }
+export { Comment }

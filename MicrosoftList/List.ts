@@ -1,6 +1,6 @@
 import { uniqueId } from "lodash"
 import { Item } from "./Item"
-import { Column, ColumnType } from "./Column"
+import { Column, ColumnType, DateColumn, TextColumn } from "./Column"
 
 
 
@@ -16,10 +16,8 @@ class List {
         this.items = []
         this.columns = columns
     }
-    addColumn(name: string, columnType: ColumnType) {
-        const newColumn = new Column(name, columnType)
-        this.columns.push(newColumn);
-
+    addColumn(column: Column) {
+        this.columns.push(column);
     }
     removeColumn(id: string) {
         this.columns = this.columns.filter(s => s.id !== id)
@@ -45,13 +43,14 @@ class List {
     }
 }
 
-const myList = new List("My List", [new Column('Text', ColumnType.Choice)]);
+const myList = new List("My List", [new TextColumn('Text')]);
 myList.addItem();
-myList.addColumn('Day', ColumnType.Date)
+myList.addItem();
+myList.addColumn(new DateColumn('Date'))
 console.log(myList);
 console.log(myList.items);
-console.log(myList.columns);
-console.log(myList.items[0].columns);
+console.log(myList.items[0].columns)
+console.log(myList.items[0].columns)
 
 
 

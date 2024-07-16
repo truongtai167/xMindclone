@@ -1,13 +1,13 @@
 import { uniqueId } from "lodash"
 import { Column } from "./Column"
-import { Commentt } from "./Comment"
+import { Comment } from "./Comment"
 
 class Item {
     public id: string
     public columns: Column[];
-    public comments: Commentt[]
+    public comments: Comment[]
 
-    constructor(columns: Column[] = [], comments: Commentt[] = []) {
+    constructor(columns: Column[] = [], comments: Comment[] = []) {
         this.id = uniqueId()
         this.columns = columns
         this.comments = comments

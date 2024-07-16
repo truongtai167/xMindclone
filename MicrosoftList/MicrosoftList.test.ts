@@ -1,7 +1,7 @@
 import { List } from "./List"
 import { Item } from "./Item"
 import { MicrosoftList } from "./MicrosoftList"
-import { Column, ColumnType } from "./Column"
+import { Column, ColumnType, DateColumn } from "./Column"
 import { TemplateService } from "./TemplateService"
 
 describe("xMind test", () => {
@@ -34,14 +34,14 @@ describe("xMind test", () => {
     test('microsoft list add a column in a list', () => {
         mcslist.createBlankList('List1')
         mcslist.lists[0].addItem()
-        mcslist.lists[0].addColumn('Day', ColumnType.Date)
+        mcslist.lists[0].addColumn(new DateColumn('Date'))
         expect(mcslist.lists[0].columns.length).toBe(1)
         expect(mcslist.lists[0].columns).toEqual(mcslist.lists[0].items[0].columns)
     })
     test('microsoft list remove a column in a list', () => {
         mcslist.createBlankList('List1')
         mcslist.lists[0].addItem()
-        mcslist.lists[0].addColumn('Day', ColumnType.Date)
+        mcslist.lists[0].addColumn(new DateColumn('Date'))
         expect(mcslist.lists[0].columns.length).toBe(1)
         mcslist.lists[0].removeColumn(mcslist.lists[0].columns[0].id)
         expect(mcslist.lists[0].columns.length).toBe(0)
@@ -52,9 +52,14 @@ describe("xMind test", () => {
         mcslist.createBlankList('List1')
         mcslist.lists[0].addItem()
         expect(mcslist.lists[0].items.length).toBe(1)
-        mcslist.lists[0].addColumn('Day', ColumnType.Date)
+        mcslist.lists[0].addColumn(new DateColumn('Date'))
         expect(mcslist.lists[0].items[0].columns.length).toBe(1)
         expect(mcslist.lists[0].columns).toEqual(mcslist.lists[0].items[0].columns)
     })
-
+    test('microsoft list add a item in a list', () => {
+        mcslist.createBlankList('List1')
+        mcslist.lists[0].addItem()
+        mcslist.lists[0].addItem()
+        expect(mcslist.lists[0].items.length).toBe(2)
+    })
 })
