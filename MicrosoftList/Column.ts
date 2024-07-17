@@ -1,4 +1,4 @@
-import { extend, uniqueId } from "lodash";
+import { uniqueId } from "lodash";
 
 // Enum for column types
 enum ColumnType {

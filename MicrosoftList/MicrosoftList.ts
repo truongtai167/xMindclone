@@ -17,6 +17,8 @@ class MicrosoftList {
     createBlankList(name: string) {
         const blanklist = new List(name)
         this.lists.push(blanklist)
+        return blanklist;
+
     }
     deleteList(listId: string) {
         this.lists = this.lists.filter(s => s.id !== listId);
