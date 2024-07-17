@@ -76,7 +76,7 @@ class List {
 
         return this.rows.filter(row =>
             row.columns.some(column =>
-                column.value && column.value.toString().toLowerCase().includes(lowerCase)
+                column.value?.toString().toLowerCase().includes(lowerCase)
             )
         )
     }
@@ -89,27 +89,6 @@ class List {
         return newView;
     }
 }
-
-
-const list = new List('abc')
-const col1 = list.addColumn(new TextColumn('Text'))
-const col2 = list.addColumn(new DateColumn('Date'))
-const col3 = list.addColumn(new YesNoColumn('YesNo'))
-const col4 = list.addColumn(new NumberColumn('Number'))
-const row1 = list.addRow({
-    [col1.id]: 'Abc',
-    [col2.id]: '2024-07-16',
-    [col3.id]: true,
-    [col4.id]: 30,
-});
-const col5 = list.addColumn(new ImageColumn('Image'))
-list.setItemColumnValue(row1.id, row1.columns[4].id, 'image/link')
-list.removeColumn(col5.id)
-
-
-const searchResult = list.searchRow('Abc')
-console.log(searchResult)
-
 
 
 export { List }

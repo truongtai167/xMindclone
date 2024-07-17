@@ -12,12 +12,12 @@ class Row {
         this.columns = columns
         this.comments = comments
     }
-    addComment() {
+    // addComment() {
 
-    }
-    deleteComment() {
+    // }
+    // deleteComment() {
 
-    }
+    // }
     setColumnValue(colId: string, value: any) {
         const col = this.columns.find(col => col.id === colId)
         if (col) {
