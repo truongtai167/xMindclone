@@ -1,6 +1,7 @@
 import { uniqueId } from "lodash"
 import { Item } from "./Item"
-import { Column, ColumnType, DateColumn, TextColumn } from "./Column"
+import { ChoiceColumn, Column, ColumnType, createColumn, DateColumn, NumberColumn, TextColumn, YesNoColumn } from "./Column"
+import { ListView, View, viewClassMapping, ViewType } from "./View"
 
 
 
@@ -9,24 +10,39 @@ class List {
     public name: string
     public columns: Column[]
     public items: Item[]
+    public views: View[]
 
-    constructor(name: string, columns: Column[] = []) {
+    constructor(name: string, columns: Column[] = [], views: View[] = []) {
         this.id = uniqueId()
         this.name = name
         this.items = []
         this.columns = columns
+        this.views = views
+        this.createDefaultView()
+    }
+    private createDefaultView() {
+        const defaultView = new ListView('All items', this.columns, this.items);
+        this.addView(defaultView);
+    }
+    addView(view: View) {
+        this.views.push(view);
     }
     addColumn(column: Column) {
         this.columns.push(column);
-    }
-    removeColumn(id: string) {
-        this.columns = this.columns.filter(s => s.id !== id)
         this.items.forEach(item => {
-            item.columns = item.columns.filter(col => col.id !== id);
+            const newColumn = createColumn(column.name, column.type);
+            item.addColumn(newColumn);
+        });
+    }
+    removeColumn(name: string) {
+        this.columns = this.columns.filter(s => s.name !== name)
+        this.items.forEach(item => {
+            item.removeColumn(name);
         });
     }
     addItem() {
-        const newItem = new Item(this.columns);
+        const newColumns = this.columns.map(col => createColumn(col.name, col.type));
+        const newItem = new Item(newColumns);
         this.items.push(newItem);
     }
     deleteItem(id: string) {
@@ -41,16 +57,21 @@ class List {
     changeName(name: string) {
         this.name = name
     }
+    setItemColumnValue(itemId: string, columnId: string, value: any) {
+        const item = this.items.find(item => item.id === itemId);
+        if (item) {
+            item.setColumnValue(columnId, value);
+        }
+    }
+    createView(name: string, type: ViewType): View {
+        const ViewClass = viewClassMapping[type];
+        const newView = new ViewClass(name, this.columns, this.items);
+        this.addView(newView);
+        return newView;
+    }
+
 }
 
-const myList = new List("My List", [new TextColumn('Text')]);
-myList.addItem();
-myList.addItem();
-myList.addColumn(new DateColumn('Date'))
-console.log(myList);
-console.log(myList.items);
-console.log(myList.items[0].columns)
-console.log(myList.items[0].columns)
 
 
 

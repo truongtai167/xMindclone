@@ -1,8 +1,6 @@
-import { Column } from "./Column"
-import { Item } from "./Item"
 import { List } from "./List"
 import { Template } from "./Template"
-import { TemplateService } from "./TemplateService"
+import { TemplateFactory } from "./TemplateFactory"
 
 class MicrosoftList {
     public lists: List[]
@@ -10,7 +8,7 @@ class MicrosoftList {
     public recentLists: List[]
     public templates: Template[]
 
-    constructor(templates: Template[] = TemplateService.initializeDefaultTemplates()) {
+    constructor(templates: Template[] = TemplateFactory.initializeDefaultTemplates()) {
         this.lists = []
         this.favoriteLists = []
         this.recentLists = []
@@ -41,12 +39,6 @@ class MicrosoftList {
         }
     }
 }
-
-const microsoftList = new MicrosoftList();
-microsoftList.addTemplateList(microsoftList.templates[0].id, 'Management');
-microsoftList.lists[0].addItem()
-console.log(microsoftList)
-console.log(microsoftList.lists[0].items)
 
 
 

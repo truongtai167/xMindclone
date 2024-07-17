@@ -1,4 +1,4 @@
-import { uniqueId } from "lodash";
+import { extend, uniqueId } from "lodash";
 
 // Enum for column types
 enum ColumnType {
@@ -12,118 +12,110 @@ enum ColumnType {
     Hyperlink = "Hyperlink"
 }
 
-interface BaseColumn {
-    id: string
-    name: string
-    type: ColumnType
-}
+abstract class Column {
+    public id: string;
+    public name: string;
+    public type: ColumnType;
+    public value: any;
 
-class TextColumn implements BaseColumn {
-    id: string;
-    name: string;
-    type: ColumnType = ColumnType.Text;
-    value: string;
-
-    constructor(name: string, value: string = '') {
+    constructor(name: string, type: ColumnType) {
         this.id = uniqueId();
         this.name = name;
+        this.type = type;
+        this.value = null;
+    }
+
+    abstract setValue(value: any): void;
+}
+
+class TextColumn extends Column {
+    constructor(name: string) {
+        super(name, ColumnType.Text)
+    }
+    setValue(value: any): void {
+        this.value = value.toString();
+    }
+}
+
+class ImageColumn extends Column {
+    constructor(name: string) {
+        super(name, ColumnType.Image)
+    }
+    setValue(value: any): void {
+        this.value = value.toString();
+    }
+}
+
+class DateColumn extends Column {
+    constructor(name: string) {
+        super(name, ColumnType.Date)
+    }
+    setValue(value: any): void {
+        this.value = new Date(value);
+    }
+}
+
+class ChoiceColumn extends Column {
+    constructor(name: string) {
+        super(name, ColumnType.Choice)
+    }
+    setValue(value: any): void {
         this.value = value;
     }
 }
 
-class ImageColumn implements BaseColumn {
-    id: string;
-    name: string;
-    type: ColumnType = ColumnType.Image;
-    value: string;
-
-    constructor(name: string, value: string = '') {
-        this.id = uniqueId();
-        this.name = name;
-        this.value = value;
+class PersonColumn extends Column {
+    constructor(name: string) {
+        super(name, ColumnType.Person)
+    }
+    setValue(value: any): void {
+        this.value = value.toString();
     }
 }
 
-class DateColumn implements BaseColumn {
-    id: string;
-    name: string;
-    type: ColumnType = ColumnType.Date;
-    value: Date | null;
-
-    constructor(name: string, value: Date | null = null) {
-        this.id = uniqueId();
-        this.name = name;
-        this.value = value;
+class YesNoColumn extends Column {
+    constructor(name: string) {
+        super(name, ColumnType.YesNo)
+    }
+    setValue(value: boolean): void {
+        this.value = new Boolean(value);
     }
 }
 
-class ChoiceColumn implements BaseColumn {
-    id: string;
-    name: string;
-    type: ColumnType = ColumnType.Choice;
-    values: string[];
-
-
-    constructor(name: string, values: string[] = []) {
-        this.id = uniqueId();
-        this.name = name;
-        this.values = values;
+class NumberColumn extends Column {
+    constructor(name: string) {
+        super(name, ColumnType.Number)
+    }
+    setValue(value: any): void {
+        this.value = new Number(value);
     }
 }
 
-class PersonColumn implements BaseColumn {
-    id: string;
-    name: string;
-    type: ColumnType = ColumnType.Person;
-    value: { name: string, email: string };
-
-    constructor(name: string, value: { name: string, email: string } = { name: '', email: '' }) {
-        this.id = uniqueId();
-        this.name = name;
-        this.value = value;
+class HyperlinkColumn extends Column {
+    constructor(name: string) {
+        super(name, ColumnType.Hyperlink)
+    }
+    setValue(value: any): void {
+        this.value = value.toString();
     }
 }
 
-class YesNoColumn implements BaseColumn {
-    id: string;
-    name: string;
-    type: ColumnType = ColumnType.YesNo;
-    value: boolean;
 
-    constructor(name: string, value: boolean = false) {
-        this.id = uniqueId();
-        this.name = name;
-        this.value = value;
-    }
+const columnClassMapping: Record<ColumnType, new (name: string) => Column> = {
+    [ColumnType.Text]: TextColumn,
+    [ColumnType.Image]: ImageColumn,
+    [ColumnType.Date]: DateColumn,
+    [ColumnType.Choice]: ChoiceColumn,
+    [ColumnType.Person]: PersonColumn,
+    [ColumnType.YesNo]: YesNoColumn,
+    [ColumnType.Number]: NumberColumn,
+    [ColumnType.Hyperlink]: HyperlinkColumn
+};
+
+function createColumn(name: string, columnType: ColumnType): Column {
+    const ColumnClass = columnClassMapping[columnType];
+    return new ColumnClass(name);
 }
 
-class NumberColumn implements BaseColumn {
-    id: string;
-    name: string;
-    type: ColumnType = ColumnType.Number;
-    value: number;
 
-    constructor(name: string, value: number = 0) {
-        this.id = uniqueId();
-        this.name = name;
-        this.value = value;
-    }
-}
-
-class HyperlinkColumn implements BaseColumn {
-    id: string;
-    name: string;
-    type: ColumnType = ColumnType.Hyperlink;
-    value: string; // URL
-
-    constructor(name: string, value: string = '') {
-        this.id = uniqueId();
-        this.name = name;
-        this.value = value;
-    }
-}
-
-// Union type for all column types
-type Column = TextColumn | ImageColumn | DateColumn | ChoiceColumn | PersonColumn | YesNoColumn | NumberColumn | HyperlinkColumn;
-
-export { Column, TextColumn, ImageColumn, DateColumn, ChoiceColumn, PersonColumn, YesNoColumn, NumberColumn, HyperlinkColumn, ColumnType };
+export { Column, TextColumn, ImageColumn, DateColumn, ChoiceColumn, PersonColumn, YesNoColumn, NumberColumn, HyperlinkColumn, ColumnType, createColumn };

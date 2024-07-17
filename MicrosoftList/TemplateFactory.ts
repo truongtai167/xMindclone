@@ -1,7 +1,7 @@
 import { Template } from "./Template";
 import { Column, ColumnType, DateColumn, HyperlinkColumn, NumberColumn, TextColumn } from "./Column";
 
-class TemplateService {
+class TemplateFactory {
     static initializeDefaultTemplates(): Template[] {
         return [
             new Template("Project Template", [
@@ -23,4 +23,4 @@ class TemplateService {
 
 }
 
-export { TemplateService };
+export { TemplateFactory };
