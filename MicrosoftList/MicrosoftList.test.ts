@@ -1,5 +1,3 @@
-import { List } from "./List"
-import { Item } from "./Item"
 import { MicrosoftList } from "./MicrosoftList"
 import { DateColumn, NumberColumn, TextColumn, YesNoColumn } from "./Column"
 import { ViewType } from "./View"
@@ -32,12 +30,12 @@ describe("xMind test", () => {
         mcslist.createBlankList('List1')
         mcslist.lists[0].addColumn(new DateColumn('Date'))
         expect(mcslist.lists[0].columns.length).toBe(1)
-        mcslist.lists[0].addItem()
+        mcslist.lists[0].addRow()
         expect(mcslist.lists[0].items[0].columns.length).toBe(1)
     })
     test('remove a column in a list', () => {
         mcslist.createBlankList('List1')
-        mcslist.lists[0].addItem()
+        mcslist.lists[0].addRow()
         mcslist.lists[0].addColumn(new DateColumn('Date'))
         expect(mcslist.lists[0].columns.length).toBe(1)
         mcslist.lists[0].removeColumn('Date')
@@ -47,7 +45,7 @@ describe("xMind test", () => {
 
     test('add a item in a list', () => {
         mcslist.createBlankList('List1')
-        mcslist.lists[0].addItem()
+        mcslist.lists[0].addRow()
         expect(mcslist.lists[0].items.length).toBe(1)
         mcslist.lists[0].addColumn(new DateColumn('Date'))
         expect(mcslist.lists[0].items[0].columns.length).toBe(1)
@@ -56,15 +54,15 @@ describe("xMind test", () => {
     })
     test('delete a item in a list', () => {
         mcslist.createBlankList('List1')
-        mcslist.lists[0].addItem()
+        mcslist.lists[0].addRow()
         expect(mcslist.lists[0].items.length).toBe(1)
-        mcslist.lists[0].deleteItem(mcslist.lists[0].items[0].id)
+        mcslist.lists[0].deleteRow(mcslist.lists[0].items[0].id)
         expect(mcslist.lists[0].items.length).toBe(0)
     })
     test('microsoft list add a item in a list', () => {
         mcslist.createBlankList('List1')
-        mcslist.lists[0].addItem()
-        mcslist.lists[0].addItem()
+        mcslist.lists[0].addRow()
+        mcslist.lists[0].addRow()
         expect(mcslist.lists[0].items.length).toBe(2)
         mcslist.lists[0].addColumn(new TextColumn('Text'))
         mcslist.lists[0].addColumn(new DateColumn('Date'))
@@ -79,7 +77,7 @@ describe("xMind test", () => {
         mcslist.createBlankList('List1')
         mcslist.lists[0].addColumn(new TextColumn('Text'))
         mcslist.lists[0].addColumn(new DateColumn('Date'))
-        mcslist.lists[0].addItem()
+        mcslist.lists[0].addRow()
         mcslist.lists[0].setItemColumnValue(mcslist.lists[0].items[0].id, mcslist.lists[0].items[0].columns[0].id, 'Abc')
         mcslist.lists[0].setItemColumnValue(mcslist.lists[0].items[0].id, mcslist.lists[0].items[0].columns[1].id, '2024-07-16')
         expect(mcslist.lists[0].items[0].columns[0].value).toBe('Abc')

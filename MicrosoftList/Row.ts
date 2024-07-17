@@ -1,8 +1,8 @@
 import { uniqueId } from "lodash"
-import { Column, DateColumn, TextColumn } from "./Column"
+import { Column } from "./Column"
 import { Comment } from "./Comment"
 
-class Item {
+class Row {
     public id: string
     public columns: Column[];
     public comments: Comment[]
@@ -33,4 +33,4 @@ class Item {
     }
 }
 
-export { Item }
+export { Row }

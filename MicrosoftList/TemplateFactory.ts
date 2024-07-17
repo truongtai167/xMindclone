@@ -1,5 +1,5 @@
 import { Template } from "./Template";
-import { Column, ColumnType, DateColumn, HyperlinkColumn, NumberColumn, TextColumn } from "./Column";
+import { DateColumn, HyperlinkColumn, NumberColumn, TextColumn } from "./Column";
 
 class TemplateFactory {
     static initializeDefaultTemplates(): Template[] {

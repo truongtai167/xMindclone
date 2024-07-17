@@ -1,6 +1,6 @@
 import { uniqueId } from "lodash"
 import { Column } from "./Column"
-import { Item } from "./Item"
+import { Row } from "./Row"
 
 enum ViewType {
     List = 'List',
@@ -12,10 +12,10 @@ abstract class View {
     public id: string
     public name: string
     public columns: Column[]
-    public items: Item[]
+    public items: Row[]
     public type: ViewType
 
-    constructor(name: string, columns: Column[], items: Item[], type: ViewType) {
+    constructor(name: string, columns: Column[], items: Row[], type: ViewType) {
         this.id = uniqueId()
         this.name = name
         this.columns = columns
@@ -24,27 +24,27 @@ abstract class View {
     }
 }
 class ListView extends View {
-    constructor(name: string, columns: Column[], items: Item[]) {
+    constructor(name: string, columns: Column[], items: Row[]) {
         super(name, columns, items, ViewType.List)
     }
 }
 class CalendarView extends View {
-    constructor(name: string, columns: Column[], items: Item[]) {
+    constructor(name: string, columns: Column[], items: Row[]) {
         super(name, columns, items, ViewType.Calendar)
     }
 }
 class GalleryView extends View {
-    constructor(name: string, columns: Column[], items: Item[]) {
+    constructor(name: string, columns: Column[], items: Row[]) {
         super(name, columns, items, ViewType.Gallery)
     }
 }
 class BoardView extends View {
-    constructor(name: string, columns: Column[], items: Item[]) {
+    constructor(name: string, columns: Column[], items: Row[]) {
         super(name, columns, items, ViewType.Board)
     }
 }
 
-const viewClassMapping: Record<ViewType, new (name: string, columns: Column[], items: Item[]) => View> = {
+const viewClassMapping: Record<ViewType, new (name: string, columns: Column[], items: Row[]) => View> = {
     [ViewType.List]: ListView,
     [ViewType.Calendar]: CalendarView,
     [ViewType.Gallery]: GalleryView,

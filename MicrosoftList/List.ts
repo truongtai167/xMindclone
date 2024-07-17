@@ -1,6 +1,6 @@
 import { uniqueId } from "lodash"
-import { Item } from "./Item"
-import { ChoiceColumn, Column, ColumnType, createColumn, DateColumn, NumberColumn, TextColumn, YesNoColumn } from "./Column"
+import { Row } from "./Row"
+import { Column, createColumn } from "./Column"
 import { ListView, View, viewClassMapping, ViewType } from "./View"
 
 
@@ -9,7 +9,7 @@ class List {
     public id: string
     public name: string
     public columns: Column[]
-    public items: Item[]
+    public items: Row[]
     public views: View[]
 
     constructor(name: string, columns: Column[] = [], views: View[] = []) {
@@ -40,12 +40,12 @@ class List {
             item.removeColumn(name);
         });
     }
-    addItem() {
+    addRow() {
         const newColumns = this.columns.map(col => createColumn(col.name, col.type));
-        const newItem = new Item(newColumns);
+        const newItem = new Row(newColumns);
         this.items.push(newItem);
     }
-    deleteItem(id: string) {
+    deleteRow(id: string) {
         this.items = this.items.filter(s => s.id !== id)
     }
     exportCSV(): string {
