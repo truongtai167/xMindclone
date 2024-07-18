@@ -22,6 +22,15 @@ abstract class View {
         this.items = items
         this.type = type
     }
+
+    toJSON() {
+        return {
+            id: this.id,
+            name: this.name,
+            columns: this.columns.map(col => col.toJSON()),
+            items: this.items.map(item => item.toJSON())
+        };
+    }
 }
 class ListView extends View {
     constructor(name: string, columns: Column[], items: Row[]) {

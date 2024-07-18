@@ -1,0 +1,246 @@
+{
+  "id": "19",
+  "name": "List1",
+  "columns": [
+    {
+      "id": "21",
+      "name": "Name",
+      "type": "Text",
+      "value": null
+    },
+    {
+      "id": "22",
+      "name": "Date Of Birth",
+      "type": "Date",
+      "value": null
+    },
+    {
+      "id": "23",
+      "name": "Married",
+      "type": "Yes/No",
+      "value": null
+    },
+    {
+      "id": "24",
+      "name": "Age",
+      "type": "Number",
+      "value": null
+    }
+  ],
+  "rows": [
+    {
+      "id": "29",
+      "columns": [
+        {
+          "id": "25",
+          "name": "Name",
+          "type": "Text",
+          "value": "Truong Tai"
+        },
+        {
+          "id": "26",
+          "name": "Date Of Birth",
+          "type": "Date",
+          "value": "2024-07-08"
+        },
+        {
+          "id": "27",
+          "name": "Married",
+          "type": "Yes/No",
+          "value": true
+        },
+        {
+          "id": "28",
+          "name": "Age",
+          "type": "Number",
+          "value": 22
+        }
+      ]
+    },
+    {
+      "id": "34",
+      "columns": [
+        {
+          "id": "30",
+          "name": "Name",
+          "type": "Text",
+          "value": "Tai Truong"
+        },
+        {
+          "id": "31",
+          "name": "Date Of Birth",
+          "type": "Date",
+          "value": "2024-07-08"
+        },
+        {
+          "id": "32",
+          "name": "Married",
+          "type": "Yes/No",
+          "value": null
+        },
+        {
+          "id": "33",
+          "name": "Age",
+          "type": "Number",
+          "value": 30
+        }
+      ]
+    },
+    {
+      "id": "39",
+      "columns": [
+        {
+          "id": "35",
+          "name": "Name",
+          "type": "Text",
+          "value": "Khoi Nguyen"
+        },
+        {
+          "id": "36",
+          "name": "Date Of Birth",
+          "type": "Date",
+          "value": "2024-07-08"
+        },
+        {
+          "id": "37",
+          "name": "Married",
+          "type": "Yes/No",
+          "value": null
+        },
+        {
+          "id": "38",
+          "name": "Age",
+          "type": "Number",
+          "value": 30
+        }
+      ]
+    }
+  ],
+  "views": [
+    {
+      "id": "20",
+      "name": "All items",
+      "columns": [
+        {
+          "id": "21",
+          "name": "Name",
+          "type": "Text",
+          "value": null
+        },
+        {
+          "id": "22",
+          "name": "Date Of Birth",
+          "type": "Date",
+          "value": null
+        },
+        {
+          "id": "23",
+          "name": "Married",
+          "type": "Yes/No",
+          "value": null
+        },
+        {
+          "id": "24",
+          "name": "Age",
+          "type": "Number",
+          "value": null
+        },
+        {
+          "id": "40",
+          "name": "Image",
+          "type": "Image",
+          "value": null
+        }
+      ],
+      "items": [
+        {
+          "id": "29",
+          "columns": [
+            {
+              "id": "25",
+              "name": "Name",
+              "type": "Text",
+              "value": "Truong Tai"
+            },
+            {
+              "id": "26",
+              "name": "Date Of Birth",
+              "type": "Date",
+              "value": "2024-07-08"
+            },
+            {
+              "id": "27",
+              "name": "Married",
+              "type": "Yes/No",
+              "value": true
+            },
+            {
+              "id": "28",
+              "name": "Age",
+              "type": "Number",
+              "value": 22
+            }
+          ]
+        },
+        {
+          "id": "34",
+          "columns": [
+            {
+              "id": "30",
+              "name": "Name",
+              "type": "Text",
+              "value": "Tai Truong"
+            },
+            {
+              "id": "31",
+              "name": "Date Of Birth",
+              "type": "Date",
+              "value": "2024-07-08"
+            },
+            {
+              "id": "32",
+              "name": "Married",
+              "type": "Yes/No",
+              "value": null
+            },
+            {
+              "id": "33",
+              "name": "Age",
+              "type": "Number",
+              "value": 30
+            }
+          ]
+        },
+        {
+          "id": "39",
+          "columns": [
+            {
+              "id": "35",
+              "name": "Name",
+              "type": "Text",
+              "value": "Khoi Nguyen"
+            },
+            {
+              "id": "36",
+              "name": "Date Of Birth",
+              "type": "Date",
+              "value": "2024-07-08"
+            },
+            {
+              "id": "37",
+              "name": "Married",
+              "type": "Yes/No",
+              "value": null
+            },
+            {
+              "id": "38",
+              "name": "Age",
+              "type": "Number",
+              "value": 30
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

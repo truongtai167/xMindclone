@@ -1,6 +1,6 @@
 import { uniqueId } from "lodash"
 import { Row } from "./Row"
-import { Column, createColumn, DateColumn, ImageColumn, NumberColumn, TextColumn, YesNoColumn } from "./Column"
+import { Column, createColumn } from "./Column"
 import { ListView, View, viewClassMapping, ViewType } from "./View"
 
 
@@ -80,7 +80,12 @@ class List {
             )
         )
     }
-
+    filterRow(colName: string, values: any[]): Row[] {
+        return this.rows.filter(row => {
+            const column = row.columns.find(col => col.name === colName)
+            return column ? values.includes(column.value) : false;
+        })
+    }
 
     createView(name: string, type: ViewType): View {
         const ViewClass = viewClassMapping[type];
@@ -88,6 +93,40 @@ class List {
         this.addView(newView);
         return newView;
     }
+
+    toJSON() {
+        return {
+            id: this.id,
+            name: this.name,
+            columns: this.columns.map(col => col.toJSON()),
+            rows: this.rows.map(row => row.toJSON()),
+            views: this.views.map(view => view.toJSON())
+        };
+    }
+
+    static fromJSON(json: any): List {
+        const list = new List(json.name);
+        list.id = json.id;
+        list.columns = json.columns.map((col: any) => createColumn(col.name, col.type));
+        list.rows = json.rows.map((row: any) => {
+            const columns = row.columns.map((col: any) => {
+                const column = createColumn(col.name, col.type);
+                column.id = col.id;
+                column.setValue(col.value);
+                return column;
+            });
+            const newRow = new Row(columns);
+            newRow.id = row.id;
+            return newRow;
+        });
+        return list;
+    }
+
+    getRowsPage(pageNumber: number, pageSize: number): Row[] {
+        const startIndex = (pageNumber - 1) * pageSize
+        return this.rows.slice(startIndex, startIndex + pageSize)
+    }
+
 }
 
 

@@ -1,6 +1,8 @@
 import { MicrosoftList } from "./MicrosoftList"
 import { DateColumn, ImageColumn, NumberColumn, TextColumn, YesNoColumn } from "./Column"
 import { ViewType } from "./View"
+import fs from 'fs';
+import path from 'path';
 
 describe("xMind test", () => {
     let mcslist: MicrosoftList
@@ -54,16 +56,47 @@ describe("xMind test", () => {
         expect(row3.columns.length).toBe(4)
 
 
-
+        //search & filter
         const searchResult = list.searchRow('Tai')
         expect(searchResult.length).toBe(2)
+        const filterRow = list.filterRow(col1.name, [row1.columns[0].value])
+        expect(filterRow.length).toBe(1)
+        const filterRow2 = list.filterRow(col1.name, [row2.columns[0].value, row3.columns[0].value])
+        expect(filterRow2.length).toBe(2)
+
+
+        //save file to JSON
+        const testFilePath = path.join(__dirname, 'testList.json');
+        mcslist.saveListToFile(list.id, testFilePath)
+        const savedData = fs.readFileSync(testFilePath, 'utf8');
+        const savedList = JSON.parse(savedData);
+        expect(savedList.name).toBe('List1');
+        expect(savedList.columns.length).toBe(4);
+        expect(savedList.columns[0].name).toBe('Name');
+        expect(savedList.columns[1].name).toBe('Date Of Birth');
+
+
+        //load file from json
+        const loadedlist = mcslist.fromJson(testFilePath)
+        expect(mcslist.lists.length).toBe(2)
+        expect(loadedlist.name).toBe('List1');
+        expect(loadedlist.columns.length).toBe(4);
+        expect(loadedlist.columns[0].name).toBe('Name');
+        expect(loadedlist.columns[1].name).toBe('Date Of Birth');
 
 
 
+        //pagination
+        const pageNumber = 1
+        const pageSize = 2
+        const pageRows = list.getRowsPage(pageNumber, pageSize);
+        expect(pageRows.length).toBe(2)
+        expect(pageRows[0].columns[0].value).toBe('Truong Tai')
+        expect(pageRows).toContain(row1)
+        expect(pageRows).toContain(row2)
+        expect(pageRows).not.toContain(row3)
 
     })
-
-
 
 
     test('microsoft list should create new blank list', () => {

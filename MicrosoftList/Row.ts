@@ -31,6 +31,12 @@ class Row {
     removeColumn(name: string) {
         this.columns = this.columns.filter(col => col.name !== name);
     }
+    toJSON() {
+        return {
+            id: this.id,
+            columns: this.columns.map(col => col.toJSON())
+        };
+    }
 }
 
 export { Row }
