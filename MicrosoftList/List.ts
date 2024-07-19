@@ -1,7 +1,7 @@
 import { uniqueId } from "lodash"
 import { Row } from "./Row"
-import { Column, createColumn } from "./Column"
-import { ListView, View, viewClassMapping, ViewType } from "./View"
+import { ChoiceColumn, Column, createColumn, DateColumn, NumberColumn, TextColumn, YesNoColumn } from "./Column"
+import { BoardView, ListView, View, viewClassMapping, ViewType } from "./View"
 
 
 
@@ -86,7 +86,6 @@ class List {
             return column ? values.includes(column.value) : false;
         })
     }
-
     createView(name: string, type: ViewType): View {
         const ViewClass = viewClassMapping[type];
         const newView = new ViewClass(name, this.columns, this.rows);
@@ -127,7 +126,62 @@ class List {
         return this.rows.slice(startIndex, startIndex + pageSize)
     }
 
+
+    addColumnWithDefault(column: Column, defaultValue: any) {
+        this.columns.push(column);
+        this.rows.forEach(item => {
+            const newColumn = createColumn(column.name, column.type);
+            newColumn.value = defaultValue;
+            item.addColumn(newColumn);
+        });
+        return column;
+    }
+    addBoardColumn(column: Column, defaultValue: any) {
+        // Set the default value for the column
+        column.value = defaultValue;
+
+        // Add the column to the main list and all rows
+        this.addColumnWithDefault(column, defaultValue);
+
+        // Update the BoardView specifically
+        this.views.forEach(view => {
+            if (view instanceof BoardView) {
+                view.addBoardColumn(column, defaultValue);
+            }
+        });
+    }
+
 }
 
+
+const list = new List('List')
+const col1 = list.addColumn(new TextColumn('Name'))
+const col2 = list.addColumn(new DateColumn('Date Of Birth'))
+const col3 = list.addColumn(new YesNoColumn('Married'))
+const col4 = list.addColumn(new NumberColumn('Age'))
+const row1 = list.addRow({
+    [col1.id]: 'Truong Tai',
+    [col2.id]: '2024-07-08',
+    [col3.id]: true,
+    [col4.id]: 22,
+});
+const row2 = list.addRow({
+    [col1.id]: 'Tai Truong',
+    [col2.id]: '2024-07-08',
+    [col3.id]: false,
+    [col4.id]: 30,
+});
+const row3 = list.addRow({
+    [col1.id]: 'Khoi Nguyen',
+    [col2.id]: '2024-07-08',
+    [col3.id]: false,
+    [col4.id]: 30,
+});
+
+const boardView = list.createView('Board View', ViewType.Board)
+boardView.addBoardColumn(new ChoiceColumn('abcd'), ['Ok'])
+boardView.moveColumn(boardView.rows[0].id, boardView.columns[4].id)
+
+console.log(list.rows[0].columns[4].value)
 
 export { List }

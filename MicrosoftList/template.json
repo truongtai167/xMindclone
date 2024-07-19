@@ -1,0 +1,49 @@
+[
+    {
+        "name": "Project Template",
+        "columns": [
+            {
+                "type": "TextColumn",
+                "name": "Task"
+            },
+            {
+                "type": "DateColumn",
+                "name": "Due Date"
+            }
+        ]
+    },
+    {
+        "name": "Contact List Template",
+        "columns": [
+            {
+                "type": "TextColumn",
+                "name": "Name"
+            },
+            {
+                "type": "HyperlinkColumn",
+                "name": "Email"
+            },
+            {
+                "type": "TextColumn",
+                "name": "Phone Number"
+            }
+        ]
+    },
+    {
+        "name": "Inventory Template",
+        "columns": [
+            {
+                "type": "TextColumn",
+                "name": "Item"
+            },
+            {
+                "type": "NumberColumn",
+                "name": "Quantity"
+            },
+            {
+                "type": "TextColumn",
+                "name": "Price"
+            }
+        ]
+    }
+]

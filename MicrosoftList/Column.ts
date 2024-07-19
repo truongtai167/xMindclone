@@ -139,4 +139,4 @@ function createColumn(name: string, columnType: ColumnType): Column {
 }
 
 
-export { Column, TextColumn, ImageColumn, DateColumn, ChoiceColumn, PersonColumn, YesNoColumn, NumberColumn, HyperlinkColumn, RatingColumn, ColumnType, createColumn };
+export { Column, TextColumn, ImageColumn, DateColumn, ChoiceColumn, PersonColumn, YesNoColumn, NumberColumn, HyperlinkColumn, RatingColumn, ColumnType, createColumn, columnClassMapping };

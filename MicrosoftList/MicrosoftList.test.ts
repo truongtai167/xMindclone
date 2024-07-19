@@ -1,5 +1,5 @@
 import { MicrosoftList } from "./MicrosoftList"
-import { DateColumn, ImageColumn, NumberColumn, TextColumn, YesNoColumn } from "./Column"
+import { ChoiceColumn, DateColumn, ImageColumn, NumberColumn, TextColumn, YesNoColumn } from "./Column"
 import { ViewType } from "./View"
 import fs from 'fs';
 import path from 'path';
@@ -65,7 +65,7 @@ describe("xMind test", () => {
         expect(filterRow2.length).toBe(2)
 
 
-        //save file to JSON
+        //save list to JSON
         const testFilePath = path.join(__dirname, 'testList.json');
         mcslist.saveListToFile(list.id, testFilePath)
         const savedData = fs.readFileSync(testFilePath, 'utf8');
@@ -76,7 +76,7 @@ describe("xMind test", () => {
         expect(savedList.columns[1].name).toBe('Date Of Birth');
 
 
-        //load file from json
+        //load list from json
         const loadedlist = mcslist.fromJson(testFilePath)
         expect(mcslist.lists.length).toBe(2)
         expect(loadedlist.name).toBe('List1');
@@ -96,7 +96,40 @@ describe("xMind test", () => {
         expect(pageRows).toContain(row2)
         expect(pageRows).not.toContain(row3)
 
+
+
+
     })
+
+
+    test('add a view', () => {
+        //tạo boardView
+        const list = mcslist.createBlankList('List1')
+        const col1 = list.addColumn(new TextColumn('Name'))
+        const col2 = list.addColumn(new DateColumn('Date Of Birth'))
+        const row1 = list.addRow({
+            [col1.id]: 'Truong Tai',
+            [col2.id]: '2024-07-08',
+        })
+        const row2 = list.addRow({
+            [col1.id]: 'Khoi Nguyen',
+            [col2.id]: '2024-07-08',
+        })
+
+        const boardView = list.createView('Board View', ViewType.Board)
+        boardView.addBoardColumn(new TextColumn('Abc'), 'Ok')
+        expect(list.views.length).toBe(2)
+        expect(list.columns.length).toBe(3)
+        expect(boardView.columns.length).toBe(3)
+        boardView.moveColumn(boardView.rows[0].id, boardView.columns[2].id)
+        expect(boardView.rows[0].columns[2].value).toBe('Ok')
+
+
+
+    })
+
+
+
 
 
     test('microsoft list should create new blank list', () => {
@@ -173,17 +206,6 @@ describe("xMind test", () => {
         expect(list.rows[0].columns[0].value).toBe('Abc')
         expect(list.columns[0].value).toBe(null)
     })
-    test('add a view', () => {
-        const list = mcslist.createBlankList('List1')
-        expect(list.views.length).toBe(1)
-        list.createView('Board View', ViewType.Board)
-        expect(list.views.length).toBe(2)
-        expect(list.columns).toEqual(list.views[0].columns)
-        expect(list.columns).toEqual(list.views[1].columns)
-        expect(list.rows).toEqual(list.views[0].items)
-        expect(list.rows).toEqual(list.views[1].items)
-    })
-
 
 
 

@@ -1,5 +1,5 @@
 import { uniqueId } from "lodash"
-import { Column } from "./Column"
+import { Column, createColumn, TextColumn } from "./Column"
 import { Row } from "./Row"
 
 enum ViewType {
@@ -12,14 +12,14 @@ abstract class View {
     public id: string
     public name: string
     public columns: Column[]
-    public items: Row[]
+    public rows: Row[]
     public type: ViewType
 
-    constructor(name: string, columns: Column[], items: Row[], type: ViewType) {
+    constructor(name: string, columns: Column[], rows: Row[], type: ViewType) {
         this.id = uniqueId()
         this.name = name
         this.columns = columns
-        this.items = items
+        this.rows = rows
         this.type = type
     }
 
@@ -28,32 +28,59 @@ abstract class View {
             id: this.id,
             name: this.name,
             columns: this.columns.map(col => col.toJSON()),
-            items: this.items.map(item => item.toJSON())
+            rows: this.rows.map(item => item.toJSON())
         };
+    }
+    addColumn(column: Column) {
+        this.columns.push(column);
+        this.rows.forEach(item => item.addColumn(createColumn(column.name, column.type)));
+    }
+
+    removeColumn(name: string) {
+        this.columns = this.columns.filter(col => col.name !== name);
+        this.rows.forEach(item => item.removeColumn(name));
+    }
+    addBoardColumn(column: Column, defaultValue: any) {
+
+    }
+    moveColumn(rowId: string, colId: string) {
+
     }
 }
 class ListView extends View {
-    constructor(name: string, columns: Column[], items: Row[]) {
-        super(name, columns, items, ViewType.List)
+    constructor(name: string, columns: Column[], rows: Row[]) {
+        super(name, columns, rows, ViewType.List)
     }
 }
 class CalendarView extends View {
-    constructor(name: string, columns: Column[], items: Row[]) {
-        super(name, columns, items, ViewType.Calendar)
+    constructor(name: string, columns: Column[], rows: Row[]) {
+        super(name, columns, rows, ViewType.Calendar)
     }
 }
 class GalleryView extends View {
-    constructor(name: string, columns: Column[], items: Row[]) {
-        super(name, columns, items, ViewType.Gallery)
+    constructor(name: string, columns: Column[], rows: Row[]) {
+        super(name, columns, rows, ViewType.Gallery)
     }
 }
 class BoardView extends View {
-    constructor(name: string, columns: Column[], items: Row[]) {
-        super(name, columns, items, ViewType.Board)
+    constructor(name: string, columns: Column[], rows: Row[]) {
+        super(name, columns, rows, ViewType.Board)
+    }
+    addBoardColumn(column: Column, defaultValue: any) {
+        this.addColumn(column);
+        column.value = defaultValue
+    }
+    moveColumn(rowId: string, colId: string): void {
+        const row = this.rows.find(item => item.id === rowId);
+        const col = this.columns.find(item => item.id === colId);
+        // Optional chaining and logical AND to handle the operation without explicit if checks
+        row && col && row.columns
+            .filter(item => item.name === col.name)
+            .forEach(item => item.value = col.value);
     }
 }
 
-const viewClassMapping: Record<ViewType, new (name: string, columns: Column[], items: Row[]) => View> = {
+const viewClassMapping: Record<ViewType, new (name: string, columns: Column[], rows: Row[]) => View> = {
     [ViewType.List]: ListView,
     [ViewType.Calendar]: CalendarView,
     [ViewType.Gallery]: GalleryView,
@@ -63,4 +90,4 @@ const viewClassMapping: Record<ViewType, new (name: string, columns: Column[], i
 
 
 
-export { View, ListView, CalendarView, viewClassMapping, ViewType }
+export { View, ListView, CalendarView, viewClassMapping, ViewType, BoardView }

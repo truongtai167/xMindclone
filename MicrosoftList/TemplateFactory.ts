@@ -1,24 +1,28 @@
 import { Template } from "./Template";
-import { DateColumn, HyperlinkColumn, NumberColumn, TextColumn } from "./Column";
+import { DateColumn, HyperlinkColumn, NumberColumn, TextColumn, createColumn, ColumnType } from "./Column";
+import fs from 'fs'
 
 class TemplateFactory {
+
     static initializeDefaultTemplates(): Template[] {
-        return [
-            new Template("Project Template", [
-                new TextColumn("Task"),
-                new DateColumn("Due Date")
-            ]),
-            new Template("Contact List Template", [
-                new TextColumn("Name"),
-                new HyperlinkColumn("Email"),
-                new TextColumn("Phone Number")
-            ]),
-            new Template("Inventory Template", [
-                new TextColumn("Item"),
-                new NumberColumn("Quantity"),
-                new TextColumn("Price")
-            ])
-        ];
+
+        const columnTypeMapping: Record<string, ColumnType> = {
+            "TextColumn": ColumnType.Text,
+            "DateColumn": ColumnType.Date,
+            "HyperlinkColumn": ColumnType.Hyperlink,
+            "NumberColumn": ColumnType.Number,
+        };
+        const filePath = './MicrosoftList/template.json';
+        const templatesData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        return templatesData.map((templateData: any) => {
+            const columns = templateData.columns.map((colData: any) => {
+                const columnTypeString = colData.type;
+                const columnType = columnTypeMapping[columnTypeString];
+                return createColumn(colData.name, columnType);
+            });
+
+            return new Template(templateData.name, columns);
+        });
     }
 
 }
