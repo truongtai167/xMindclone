@@ -1,5 +1,5 @@
 import { Template } from "./Template";
-import { DateColumn, HyperlinkColumn, NumberColumn, TextColumn, createColumn, ColumnType } from "./Column";
+import { createColumn, ColumnType } from "./Column";
 import fs from 'fs'
 
 class TemplateFactory {

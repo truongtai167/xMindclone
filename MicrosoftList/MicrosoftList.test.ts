@@ -1,5 +1,5 @@
 import { MicrosoftList } from "./MicrosoftList"
-import { ChoiceColumn, DateColumn, ImageColumn, NumberColumn, TextColumn, YesNoColumn } from "./Column"
+import { DateColumn, ImageColumn, NumberColumn, TextColumn, YesNoColumn } from "./Column"
 import { ViewType } from "./View"
 import fs from 'fs';
 import path from 'path';
