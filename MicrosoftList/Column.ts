@@ -1,4 +1,4 @@
-import { extend, uniqueId } from "lodash";
+import { uniqueId } from "lodash";
 
 // Enum for column types
 enum ColumnType {
@@ -9,7 +9,8 @@ enum ColumnType {
     Person = "Person",
     YesNo = "Yes/No",
     Number = "Number",
-    Hyperlink = "Hyperlink"
+    Hyperlink = "Hyperlink",
+    Rating = "Rating"
 }
 
 abstract class Column {
@@ -26,6 +27,15 @@ abstract class Column {
     }
 
     abstract setValue(value: any): void;
+
+    toJSON() {
+        return {
+            id: this.id,
+            name: this.name,
+            type: this.type,
+            value: this.value
+        };
+    }
 }
 
 class TextColumn extends Column {
@@ -56,12 +66,14 @@ class DateColumn extends Column {
 }
 
 class ChoiceColumn extends Column {
-    constructor(name: string) {
-        super(name, ColumnType.Choice)
+    constructor(name: string, values: string[] = []) {
+        super(name, ColumnType.Choice);
+        this.value = values;
     }
     setValue(value: any): void {
         this.value = value;
     }
+
 }
 
 class PersonColumn extends Column {
@@ -99,7 +111,14 @@ class HyperlinkColumn extends Column {
         this.value = value.toString();
     }
 }
-
+class RatingColumn extends Column {
+    constructor(name: string) {
+        super(name, ColumnType.Hyperlink)
+    }
+    setValue(value: any): void {
+        this.value = new Number(value);
+    }
+}
 
 const columnClassMapping: Record<ColumnType, new (name: string) => Column> = {
     [ColumnType.Text]: TextColumn,
@@ -109,7 +128,9 @@ const columnClassMapping: Record<ColumnType, new (name: string) => Column> = {
     [ColumnType.Person]: PersonColumn,
     [ColumnType.YesNo]: YesNoColumn,
     [ColumnType.Number]: NumberColumn,
-    [ColumnType.Hyperlink]: HyperlinkColumn
+    [ColumnType.Hyperlink]: HyperlinkColumn,
+    [ColumnType.Rating]: RatingColumn
+
 };
 
 function createColumn(name: string, columnType: ColumnType): Column {
@@ -118,4 +139,4 @@ function createColumn(name: string, columnType: ColumnType): Column {
 }
 
 
-export { Column, TextColumn, ImageColumn, DateColumn, ChoiceColumn, PersonColumn, YesNoColumn, NumberColumn, HyperlinkColumn, ColumnType, createColumn };
+export { Column, TextColumn, ImageColumn, DateColumn, ChoiceColumn, PersonColumn, YesNoColumn, NumberColumn, HyperlinkColumn, RatingColumn, ColumnType, createColumn, columnClassMapping };

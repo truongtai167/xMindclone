@@ -1,8 +1,8 @@
 import { uniqueId } from "lodash"
-import { Column, DateColumn, TextColumn } from "./Column"
+import { Column } from "./Column"
 import { Comment } from "./Comment"
 
-class Item {
+class Row {
     public id: string
     public columns: Column[];
     public comments: Comment[]
@@ -12,17 +12,15 @@ class Item {
         this.columns = columns
         this.comments = comments
     }
-    addComment() {
+    // addComment() {
 
-    }
-    deleteComment() {
+    // }
+    // deleteComment() {
 
-    }
+    // }
     setColumnValue(colId: string, value: any) {
         const col = this.columns.find(col => col.id === colId)
-        if (col) {
-            col.setValue(value)
-        }
+        col?.setValue(value)
     }
     addColumn(column: Column) {
         this.columns.push(column);
@@ -31,6 +29,12 @@ class Item {
     removeColumn(name: string) {
         this.columns = this.columns.filter(col => col.name !== name);
     }
+    toJSON() {
+        return {
+            id: this.id,
+            columns: this.columns.map(col => col.toJSON())
+        };
+    }
 }
 
-export { Item }
+export { Row }
