@@ -1,6 +1,8 @@
 import { List } from "./List"
 import { Template } from "./Template"
 import { TemplateFactory } from "./TemplateFactory"
+import fs from 'fs';
+
 
 class MicrosoftList {
     public lists: List[]
@@ -17,6 +19,8 @@ class MicrosoftList {
     createBlankList(name: string) {
         const blanklist = new List(name)
         this.lists.push(blanklist)
+        return blanklist;
+
     }
     deleteList(listId: string) {
         this.lists = this.lists.filter(s => s.id !== listId);
@@ -38,6 +42,21 @@ class MicrosoftList {
             this.lists.push(newList);
         }
     }
+    saveListToFile(listId: string, filename: string) {
+        const list = this.lists.find(list => list.id === listId);
+        if (list) {
+            const json = JSON.stringify(list.toJSON(), null, 2);
+            fs.writeFileSync(filename, json, 'utf8');
+        }
+    }
+    fromJson(filename: string) {
+        const data = fs.readFileSync(filename, 'utf8');
+        const jsonData = JSON.parse(data);
+        const list = List.fromJSON(jsonData);
+        this.lists.push(list);
+        return list;
+    }
+
 }
 
 
