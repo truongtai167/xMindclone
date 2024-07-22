@@ -20,9 +20,7 @@ class Row {
     // }
     setColumnValue(colId: string, value: any) {
         const col = this.columns.find(col => col.id === colId)
-        if (col) {
-            col.setValue(value)
-        }
+        col?.setValue(value)
     }
     addColumn(column: Column) {
         this.columns.push(column);

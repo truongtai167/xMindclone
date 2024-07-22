@@ -4,7 +4,7 @@ import { ViewType } from "./View"
 import fs from 'fs';
 import path from 'path';
 
-describe("xMind test", () => {
+describe("Microsoft list test", () => {
     let mcslist: MicrosoftList
 
     beforeEach(() => {
@@ -97,8 +97,25 @@ describe("xMind test", () => {
         expect(pageRows).not.toContain(row3)
 
 
-
-
+        // create a form 
+        const form1 = list.createForm('Form 1')
+        expect(form1.columns.length).toBe(4)
+        form1.submitForm({
+            [col1.id]: 'Khoa Nguyen',
+            [col2.id]: '2024-07-08',
+            [col3.id]: false,
+            [col4.id]: 20,
+        })
+        expect(list.rows.length).toBe(4)
+        expect(list.views[0].rows.length).toBe(4)
+        form1.submitForm({
+            [col1.id]: 'Thinh Vo',
+            [col2.id]: '2024-07-08',
+            [col3.id]: false,
+        })
+        expect(list.rows.length).toBe(5)
+        expect(list.rows[4].columns[0].value).toBe('Thinh Vo')
+        expect(list.rows[4].columns[3].value).toBe(null)
     })
 
 
@@ -118,6 +135,7 @@ describe("xMind test", () => {
 
         const boardView = list.createView('Board View', ViewType.Board)
         boardView.addBoardColumn(new TextColumn('Abc'), 'Ok')
+        expect(boardView.rows.length).toBe(2)
         expect(list.views.length).toBe(2)
         expect(list.columns.length).toBe(3)
         expect(boardView.columns.length).toBe(3)

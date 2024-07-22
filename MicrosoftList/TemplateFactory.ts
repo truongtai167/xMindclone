@@ -11,6 +11,11 @@ class TemplateFactory {
             "DateColumn": ColumnType.Date,
             "HyperlinkColumn": ColumnType.Hyperlink,
             "NumberColumn": ColumnType.Number,
+            "ChoiceColumn": ColumnType.Choice,
+            "YesNoColumn": ColumnType.YesNo,
+            "RatingColumn": ColumnType.Rating,
+            "ImageColumn": ColumnType.Image,
+            "PersonColumn": ColumnType.Person
         };
         const filePath = './MicrosoftList/template.json';
         const templatesData = JSON.parse(fs.readFileSync(filePath, 'utf8'));

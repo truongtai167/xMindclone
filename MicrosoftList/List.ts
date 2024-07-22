@@ -2,22 +2,26 @@ import { uniqueId } from "lodash"
 import { Row } from "./Row"
 import { Column, createColumn } from "./Column"
 import { BoardView, ListView, View, viewClassMapping, ViewType } from "./View"
+import { Form } from "./Form"
+import { IList } from "./Interface"
 
 
 
-class List {
+class List implements IList {
     public id: string
     public name: string
     public columns: Column[]
     public rows: Row[]
     public views: View[]
+    public forms: Form[]
 
-    constructor(name: string, columns: Column[] = [], views: View[] = []) {
+    constructor(name: string, columns: Column[] = [], views: View[] = [], forms: Form[] = []) {
         this.id = uniqueId()
         this.name = name
         this.rows = []
         this.columns = columns
         this.views = views
+        this.forms = forms
         this.createDefaultView()
     }
     private createDefaultView() {
@@ -44,9 +48,7 @@ class List {
     addRow(columnValues: { [columnId: string]: any } = {}) {
         const newColumns = this.columns.map(col => {
             const column = createColumn(col.name, col.type);
-            if (columnValues[col.id]) {
-                column.value = columnValues[col.id];
-            }
+            column.value = columnValues[col.id] || null;
             return column;
         });
         const newItem = new Row(newColumns);
@@ -67,9 +69,7 @@ class List {
     }
     setItemColumnValue(itemId: string, columnId: string, value: any) {
         const item = this.rows.find(item => item.id === itemId);
-        if (item) {
-            item.setColumnValue(columnId, value);
-        }
+        item?.setColumnValue(columnId, value);
     }
     searchRow(searchTerm: string): Row[] {
         const lowerCase = searchTerm.toLowerCase()
@@ -145,12 +145,14 @@ class List {
 
         // Update the BoardView specifically
         this.views.forEach(view => {
-            if (view instanceof BoardView) {
-                view.addBoardColumn(column, defaultValue);
-            }
+            view?.addBoardColumn(column, defaultValue);
         });
     }
-
+    createForm(name: string) {
+        const form = new Form(name, this.columns, this)
+        this.forms.push(form)
+        return form
+    }
 }
 
 
