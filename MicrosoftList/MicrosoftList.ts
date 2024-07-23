@@ -37,17 +37,18 @@ class MicrosoftList {
     }
     addTemplateList(templateId: string, name: string) {
         const template = this.templates.find(t => t.id === templateId);
-        if (template) {
-            const newList = new List(name, template.columns);
-            this.lists.push(newList);
-        }
+        template?.columns && this.lists.push(new List(name, template.columns));
+
+    }
+    createListExisting(listId: string, name: string) {
+        const list = this.lists.find(t => t.id === listId);
+        list?.columns && this.lists.push(new List(name, list.columns));
+
     }
     saveListToFile(listId: string, filename: string) {
         const list = this.lists.find(list => list.id === listId);
-        if (list) {
-            const json = JSON.stringify(list.toJSON(), null, 2);
-            fs.writeFileSync(filename, json, 'utf8');
-        }
+        list?.toJSON && fs.writeFileSync(filename, JSON.stringify(list.toJSON(), null, 2), 'utf8');
+
     }
     fromJson(filename: string) {
         const data = fs.readFileSync(filename, 'utf8');
