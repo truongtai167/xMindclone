@@ -18,12 +18,14 @@ abstract class Column {
     public name: string;
     public type: ColumnType;
     public value: any;
+    public visible: boolean
 
     constructor(name: string, type: ColumnType) {
         this.id = uniqueId();
         this.name = name;
         this.type = type;
         this.value = null;
+        this.visible = true
     }
 
     abstract setValue(value: any): void;
@@ -35,6 +37,9 @@ abstract class Column {
             type: this.type,
             value: this.value
         };
+    }
+    toggleVisibility() {
+        this.visible = !this.visible
     }
 }
 

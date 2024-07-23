@@ -14,6 +14,7 @@ class List implements IList {
     public rows: Row[]
     public views: View[]
     public forms: Form[]
+    
 
     constructor(name: string, columns: Column[] = [], views: View[] = [], forms: Form[] = []) {
         this.id = uniqueId()
