@@ -40,6 +40,12 @@ describe("Microsoft list test", () => {
         expect(row2.columns[0].value).toBe('Tai Truong')
         expect(col1.value).toBe(null)
 
+        //hide a column
+        col1.toggleVisibility()
+        expect(col1.visible).toBe(false)
+
+
+        //add one more column
         const col5 = list.addColumn(new ImageColumn('Image'))
         expect(row1.columns.length).toBe(5)
 
@@ -142,13 +148,7 @@ describe("Microsoft list test", () => {
         boardView.moveColumn(boardView.rows[0].id, boardView.columns[2].id)
         expect(boardView.rows[0].columns[2].value).toBe('Ok')
 
-
-
     })
-
-
-
-
 
     test('microsoft list should create new blank list', () => {
         mcslist.createBlankList('List1')
@@ -161,10 +161,14 @@ describe("Microsoft list test", () => {
         mcslist.deleteList(mcslist.lists[0].id)
         expect(mcslist.lists.length).toBe(0)
     })
-    test('microsoft list add a template list', () => {
+    test('microsoft list add a template list and create list from existing', () => {
         mcslist.addTemplateList(mcslist.templates[0].id, 'Management');
         expect(mcslist.lists.length).toBe(1)
         expect(mcslist.lists[0].columns).toEqual(mcslist.templates[0].columns)
+        mcslist.createListExisting(mcslist.lists[0].id, 'Existing 1')
+        expect(mcslist.lists.length).toBe(2)
+        expect(mcslist.lists[0].columns).toEqual(mcslist.lists[1].columns)
+
     })
 
     test('add a column in a list', () => {
