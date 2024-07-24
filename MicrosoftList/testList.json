@@ -1,27 +1,27 @@
 {
-  "id": "12",
+  "id": "16",
   "name": "List1",
   "columns": [
     {
-      "id": "14",
+      "id": "18",
       "name": "Name",
       "type": "Text",
       "value": null
     },
     {
-      "id": "15",
+      "id": "19",
       "name": "Date Of Birth",
       "type": "Date",
       "value": null
     },
     {
-      "id": "16",
+      "id": "20",
       "name": "Married",
       "type": "Yes/No",
       "value": null
     },
     {
-      "id": "17",
+      "id": "21",
       "name": "Age",
       "type": "Number",
       "value": null
@@ -29,28 +29,28 @@
   ],
   "rows": [
     {
-      "id": "22",
+      "id": "26",
       "columns": [
         {
-          "id": "18",
+          "id": "22",
           "name": "Name",
           "type": "Text",
           "value": "Truong Tai"
         },
         {
-          "id": "19",
+          "id": "23",
           "name": "Date Of Birth",
           "type": "Date",
           "value": "2024-07-08"
         },
         {
-          "id": "20",
+          "id": "24",
           "name": "Married",
           "type": "Yes/No",
           "value": true
         },
         {
-          "id": "21",
+          "id": "25",
           "name": "Age",
           "type": "Number",
           "value": 22
@@ -58,28 +58,28 @@
       ]
     },
     {
-      "id": "27",
+      "id": "31",
       "columns": [
         {
-          "id": "23",
+          "id": "27",
           "name": "Name",
           "type": "Text",
           "value": "Tai Truong"
         },
         {
-          "id": "24",
+          "id": "28",
           "name": "Date Of Birth",
           "type": "Date",
           "value": "2024-07-08"
         },
         {
-          "id": "25",
+          "id": "29",
           "name": "Married",
           "type": "Yes/No",
           "value": null
         },
         {
-          "id": "26",
+          "id": "30",
           "name": "Age",
           "type": "Number",
           "value": 30
@@ -87,28 +87,28 @@
       ]
     },
     {
-      "id": "32",
+      "id": "36",
       "columns": [
         {
-          "id": "28",
+          "id": "32",
           "name": "Name",
           "type": "Text",
           "value": "Khoi Nguyen"
         },
         {
-          "id": "29",
+          "id": "33",
           "name": "Date Of Birth",
           "type": "Date",
           "value": "2024-07-08"
         },
         {
-          "id": "30",
+          "id": "34",
           "name": "Married",
           "type": "Yes/No",
           "value": null
         },
         {
-          "id": "31",
+          "id": "35",
           "name": "Age",
           "type": "Number",
           "value": 30
@@ -118,35 +118,35 @@
   ],
   "views": [
     {
-      "id": "13",
+      "id": "17",
       "name": "All items",
       "columns": [
         {
-          "id": "14",
+          "id": "18",
           "name": "Name",
           "type": "Text",
           "value": null
         },
         {
-          "id": "15",
+          "id": "19",
           "name": "Date Of Birth",
           "type": "Date",
           "value": null
         },
         {
-          "id": "16",
+          "id": "20",
           "name": "Married",
           "type": "Yes/No",
           "value": null
         },
         {
-          "id": "17",
+          "id": "21",
           "name": "Age",
           "type": "Number",
           "value": null
         },
         {
-          "id": "33",
+          "id": "37",
           "name": "Image",
           "type": "Image",
           "value": null
@@ -154,28 +154,28 @@
       ],
       "rows": [
         {
-          "id": "22",
+          "id": "26",
           "columns": [
             {
-              "id": "18",
+              "id": "22",
               "name": "Name",
               "type": "Text",
               "value": "Truong Tai"
             },
             {
-              "id": "19",
+              "id": "23",
               "name": "Date Of Birth",
               "type": "Date",
               "value": "2024-07-08"
             },
             {
-              "id": "20",
+              "id": "24",
               "name": "Married",
               "type": "Yes/No",
               "value": true
             },
             {
-              "id": "21",
+              "id": "25",
               "name": "Age",
               "type": "Number",
               "value": 22
@@ -183,28 +183,28 @@
           ]
         },
         {
-          "id": "27",
+          "id": "31",
           "columns": [
             {
-              "id": "23",
+              "id": "27",
               "name": "Name",
               "type": "Text",
               "value": "Tai Truong"
             },
             {
-              "id": "24",
+              "id": "28",
               "name": "Date Of Birth",
               "type": "Date",
               "value": "2024-07-08"
             },
             {
-              "id": "25",
+              "id": "29",
               "name": "Married",
               "type": "Yes/No",
               "value": null
             },
             {
-              "id": "26",
+              "id": "30",
               "name": "Age",
               "type": "Number",
               "value": 30
@@ -212,35 +212,36 @@
           ]
         },
         {
-          "id": "32",
+          "id": "36",
           "columns": [
             {
-              "id": "28",
+              "id": "32",
               "name": "Name",
               "type": "Text",
               "value": "Khoi Nguyen"
             },
             {
-              "id": "29",
+              "id": "33",
               "name": "Date Of Birth",
               "type": "Date",
               "value": "2024-07-08"
             },
             {
-              "id": "30",
+              "id": "34",
               "name": "Married",
               "type": "Yes/No",
               "value": null
             },
             {
-              "id": "31",
+              "id": "35",
               "name": "Age",
               "type": "Number",
               "value": 30
             }
           ]
         }
-      ]
+      ],
+      "type": "List"
     }
   ]
 }

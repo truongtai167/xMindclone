@@ -63,17 +63,17 @@ describe("Microsoft list test", () => {
 
 
         //search & filter
-        const searchResult = list.searchRow('Tai')
+        const searchResult = list.search('Tai')
         expect(searchResult.length).toBe(2)
-        const filterRow = list.filterRow(col1.name, [row1.columns[0].value])
+        const filterRow = list.filter(col1.name, [row1.columns[0].value])
         expect(filterRow.length).toBe(1)
-        const filterRow2 = list.filterRow(col1.name, [row2.columns[0].value, row3.columns[0].value])
+        const filterRow2 = list.filter(col1.name, [row2.columns[0].value, row3.columns[0].value])
         expect(filterRow2.length).toBe(2)
 
 
         //save list to JSON
         const testFilePath = path.join(__dirname, 'testList.json');
-        mcslist.saveListToFile(list.id, testFilePath)
+        mcslist.saveFile(list.id, testFilePath)
         const savedData = fs.readFileSync(testFilePath, 'utf8');
         const savedList = JSON.parse(savedData);
         expect(savedList.name).toBe('List1');
@@ -83,7 +83,7 @@ describe("Microsoft list test", () => {
 
 
         //load list from json
-        const loadedlist = mcslist.fromJson(testFilePath)
+        const loadedlist = mcslist.loadFile(testFilePath)
         expect(mcslist.lists.length).toBe(2)
         expect(loadedlist.name).toBe('List1');
         expect(loadedlist.columns.length).toBe(4);
@@ -105,7 +105,6 @@ describe("Microsoft list test", () => {
 
         // create a form 
         const form1 = list.createForm('Form 1')
-        expect(form1.columns.length).toBe(4)
         form1.submitForm({
             [col1.id]: 'Khoa Nguyen',
             [col2.id]: '2024-07-08',
@@ -148,6 +147,29 @@ describe("Microsoft list test", () => {
         boardView.moveColumn(boardView.rows[0].id, boardView.columns[2].id)
         expect(boardView.rows[0].columns[2].value).toBe('Ok')
 
+    })
+
+    test('save all list to JSON', () => {
+        const list1 = mcslist.createBlankList('List1')
+        const col1 = list1.addColumn(new TextColumn('Name'))
+        const col2 = list1.addColumn(new DateColumn('Date Of Birth'))
+        const col3 = list1.addColumn(new YesNoColumn('Married'))
+        const col4 = list1.addColumn(new NumberColumn('Age'))
+        list1.addRow({
+            [col1.id]: 'Truong Tai',
+            [col2.id]: '2024-07-08',
+            [col3.id]: true,
+            [col4.id]: 22,
+        });
+        mcslist.addTemplateList(mcslist.templates[0].id, 'List2')
+        const col1l2 = list1.addColumn(new TextColumn('Name'))
+        const col2l2 = list1.addColumn(new DateColumn('Date Of Birth'))
+        mcslist.lists[1].addRow({
+            [col1l2.id]: 'Truong Tai',
+            [col2l2.id]: '2024-07-08',
+        })
+
+        mcslist.saveAll('alllist')
     })
 
     test('microsoft list should create new blank list', () => {

@@ -1,6 +1,6 @@
 import { uniqueId } from "lodash"
 import { Row } from "./Row"
-import { Column, createColumn } from "./Column"
+import { Column, createColumn, TextColumn } from "./Column"
 import { BoardView, ListView, View, viewClassMapping, ViewType } from "./View"
 import { Form } from "./Form"
 import { IList } from "./Interface"
@@ -14,7 +14,7 @@ class List implements IList {
     public rows: Row[]
     public views: View[]
     public forms: Form[]
-    
+
 
     constructor(name: string, columns: Column[] = [], views: View[] = [], forms: Form[] = []) {
         this.id = uniqueId()
@@ -72,7 +72,7 @@ class List implements IList {
         const item = this.rows.find(item => item.id === itemId);
         item?.setColumnValue(columnId, value);
     }
-    searchRow(searchTerm: string): Row[] {
+    search(searchTerm: string): Row[] {
         const lowerCase = searchTerm.toLowerCase()
 
         return this.rows.filter(row =>
@@ -81,7 +81,7 @@ class List implements IList {
             )
         )
     }
-    filterRow(colName: string, values: any[]): Row[] {
+    filter(colName: string, values: any[]): Row[] {
         return this.rows.filter(row => {
             const column = row.columns.find(col => col.name === colName)
             return column ? values.includes(column.value) : false;
@@ -150,12 +150,14 @@ class List implements IList {
         });
     }
     createForm(name: string) {
-        const form = new Form(name, this.columns, this)
+        const form = new Form(name, this)
         this.forms.push(form)
         return form
     }
 }
 
-
-
+const list1 = new List('abc')
+list1.addColumn(new TextColumn('abc'))
+const form1 = list1.createForm('abc')
+console.log(list1)
 export { List }

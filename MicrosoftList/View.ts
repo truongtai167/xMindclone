@@ -22,13 +22,13 @@ abstract class View {
         this.rows = rows
         this.type = type
     }
-
     toJSON() {
         return {
             id: this.id,
             name: this.name,
+            type: this.type,
             columns: this.columns.map(col => col.toJSON()),
-            rows: this.rows.map(item => item.toJSON())
+            rows: this.rows.map(item => item.toJSON()),
         };
     }
     addColumn(column: Column) {
