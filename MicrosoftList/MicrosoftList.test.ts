@@ -1,6 +1,6 @@
-import { MicrosoftList } from "./MicrosoftList"
-import { DateColumn, ImageColumn, NumberColumn, TextColumn, YesNoColumn } from "./Column"
-import { ViewType } from "./View"
+import { MicrosoftList } from "./model/MicrosoftList"
+import { DateColumn, ImageColumn, NumberColumn, TextColumn, YesNoColumn } from "./model/Column"
+import { ViewType } from "./model/View"
 import fs from 'fs';
 import path from 'path';
 

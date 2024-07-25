@@ -1,11 +1,9 @@
 import { Template } from "./Template";
-import { createColumn, ColumnType } from "./Column";
-import fs from 'fs'
+import { ColumnType } from "./Column";
+import fs from 'fs';
 
-class TemplateFactory {
-
+export class TemplateFactory {
     static initializeDefaultTemplates(): Template[] {
-
         const columnTypeMapping: Record<string, ColumnType> = {
             "TextColumn": ColumnType.Text,
             "DateColumn": ColumnType.Date,
@@ -17,6 +15,7 @@ class TemplateFactory {
             "ImageColumn": ColumnType.Image,
             "PersonColumn": ColumnType.Person
         };
+
         const filePath = './MicrosoftList/template.json';
         const templatesData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         return templatesData.map((templateData: any) => {
@@ -30,6 +29,5 @@ class TemplateFactory {
         });
     }
 
-}
 
-export { TemplateFactory };
+}
