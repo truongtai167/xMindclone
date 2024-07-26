@@ -48,3 +48,9 @@ export class BoardView extends View {
         super(name, columns, rows, ViewType.Board);
     }
 }
+export const viewClassMapping: Record<ViewType, new (name: string, columns: Column[], rows: Row[]) => View> = {
+    [ViewType.List]: ListView,
+    [ViewType.Calendar]: CalendarView,
+    [ViewType.Gallery]: GalleryView,
+    [ViewType.Board]: BoardView,
+};
