@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
-import { Column, columnClassMapping } from '../model/Column';
+import { columnClassMapping } from '../model/Column';
 import { MicrosoftListService } from '../service/MicrosoftListService';
+import { MicrosoftList } from '../model/MicrosoftList';
 
-const microsoftListService = MicrosoftListService.getInstance();
+const microsoftListService = new MicrosoftListService(new MicrosoftList)
 
 const ListController = {
     addColumn: (req: Request, res: Response) => {
@@ -48,6 +49,52 @@ const ListController = {
             success: req ? true : false,
         });
     },
+    searchRow: (req: Request, res: Response) => {
+        const { listId } = req.params
+        const { searchTerm } = req.query as { searchTerm: string };
+
+        if (!listId) {
+            res.status(400).json({ error: 'Missing listId' });
+            return;
+        }
+
+        const results = microsoftListService.searchRow(searchTerm, listId);
+
+        return res.status(200).json({
+            success: req ? true : false,
+            response: results
+        });
+    },
+
+    filterRow: (req: Request, res: Response) => {
+        const { listId } = req.params
+        const { colName, values } = req.query as { colName: string; values: string[] };
+
+        if (!listId) {
+            res.status(400).json({ error: 'Missing listId' });
+            return;
+        }
+        const results = microsoftListService.filterRow(listId, colName, values);
+        res.status(200).json(results);
+        return res.status(200).json({
+            success: req ? true : false,
+            response: results
+        });
+    },
+    updateRowValue: (req: Request, res: Response) => {
+        const { listId } = req.params;
+        const { rowId, columnId, value } = req.body;
+
+        if (!listId) {
+            return res.status(400).json({ error: 'Missing listId' });
+        }
+
+        const updatedRow = microsoftListService.updateRowValue(listId, rowId, columnId, value);
+        return res.status(200).json({
+            success: true,
+            response: updatedRow
+        });
+    }
 
 
 };

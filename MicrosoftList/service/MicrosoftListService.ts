@@ -6,21 +6,13 @@ import { Row } from '../model/Row';
 import { Template } from '../model/Template';
 
 class MicrosoftListService {
-    private static instance: MicrosoftListService;
     private model: MicrosoftList;
     private jsonFilePath: string = './MicrosoftList/loadList.json';
     private templateFilePath: string = './MicrosoftList/template.json';
 
 
-    constructor() {
-        this.model = this.loadFile();
-    }
-
-    public static getInstance(): MicrosoftListService {
-        if (!MicrosoftListService.instance) {
-            MicrosoftListService.instance = new MicrosoftListService();
-        }
-        return MicrosoftListService.instance;
+    constructor(model: MicrosoftList) {
+        this.model = model;
     }
 
     loadFile(): MicrosoftList {
@@ -54,9 +46,22 @@ class MicrosoftListService {
     }
 
     getLists() {
+        this.loadFile()
         return this.model.lists;
     }
+    getListById(listId: string): List | null {
+        this.loadFile();
+        const list = this.model.lists.find(l => l.id === listId);
+
+        if (!list) {
+            console.error(`List with ID ${listId} not found.`);
+            return null;
+        }
+        return list;
+    }
+
     getTemplates() {
+        this.loadFile()
         return this.model.templates;
     }
     saveFile(data: any): void {
@@ -70,11 +75,21 @@ class MicrosoftListService {
         this.saveFile(this.model)
         return blanklist;
     }
+    createListFromTemplate(templateId: string, listName: string): List {
+        this.loadFile()
+        const template = this.model.templates.find(t => t.id === templateId);
+        if (!template) {
+            throw new Error(`Template with ID ${templateId} not found.`);
+        }
+        const newList = new List(listName, template.columns)
+        this.model.lists.push(newList);
+        this.saveFile(this.model)
+        return newList;
+    }
+
 
     deleteList(listId: string): void {
-        console.log(this.model.lists)
         this.model.lists = this.model.lists.filter(s => s.id !== listId);
-        console.log(this.model.lists)
         this.saveFile(this.model)
     }
     initializeLists(json: any): List {
@@ -113,6 +128,7 @@ class MicrosoftListService {
     }
 
     addColumn(listId: string, column: Column): Column | null {
+        this.loadFile()
         // Find the list by ID
         const list = this.model.lists.find(l => l.id === listId);
         if (!list) {
@@ -130,12 +146,11 @@ class MicrosoftListService {
             const newColumnInstance = new ColumnClass(column.name);
             row.columns.push(newColumnInstance);
         }
-        // Save the updated model to file
         this.saveFile(this.model)
-        // Return the added column
         return column;
     }
     deleteColumn(listId: string, columnId: string): void {
+        this.loadFile()
         const list = this.model.lists.find(l => l.id === listId);
 
         if (!list) {
@@ -150,6 +165,7 @@ class MicrosoftListService {
     }
 
     addRow(listId: string, rowData: { [key: string]: any } = {}): Row | null {
+        this.loadFile()
         const list = this.model.lists.find(l => l.id === listId);
 
         if (!list) {
@@ -173,6 +189,7 @@ class MicrosoftListService {
     }
 
     deleteRow(listId: string, rowId: string): void {
+        this.loadFile()
         const list = this.model.lists.find(l => l.id === listId);
         if (!list) {
             console.error(`List with ID ${listId} not found.`);
@@ -183,6 +200,7 @@ class MicrosoftListService {
         this.saveFile(this.model)
     }
     searchRow(searchTerm: string, listId: string): Row[] {
+        this.loadFile()
         const lowerCaseTerm = searchTerm.toLowerCase();
         const list = this.model.lists.find(l => l.id === listId);
         if (!list) {
@@ -197,6 +215,7 @@ class MicrosoftListService {
     }
 
     filterRow(listId: string, colName: string, values: any[]): Row[] {
+        this.loadFile()
         const list = this.model.lists.find(l => l.id === listId);
         if (!list) {
             console.error(`List with ID ${listId} not found.`);
@@ -208,6 +227,37 @@ class MicrosoftListService {
         });
     }
 
+
+    updateRowValue(listId: string, rowId: string, columnId: string, value: any): Row | null {
+        this.loadFile();
+
+        // Find the list by ID
+        const list = this.model.lists.find(l => l.id === listId);
+        if (!list) {
+            console.error(`List with ID ${listId} not found.`);
+            return null;
+        }
+        // Find the row by ID
+        const row = list.rows.find(r => r.id === rowId);
+        if (!row) {
+            console.error(`Row with ID ${rowId} not found.`);
+            return null;
+        }
+        // Update the row columns
+        const column = row.columns.find(col => col.id === columnId);
+        if (!column) {
+            console.error(`Column with ID ${columnId} not found.`);
+            return null;
+        }
+        // Update the column value
+
+        console.log('Before Update:', column); // Log before update
+        column.value = value;
+        console.log('After Update:', column); // Log after update
+        // Save changes to the model
+        this.saveFile(this.model);
+        return row;
+    }
 
 }
 

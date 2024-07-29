@@ -1,4 +1,3 @@
-import { uniqueId } from "lodash";
 import { Column } from "./Column";
 
 export class Template {
