@@ -1,5 +1,5 @@
 import { uniqueId } from "lodash";
-import { Column, createColumn } from "./Column";
+import { Column } from "./Column";
 import { Row } from "./Row";
 import { View } from "./View";
 import { Form } from "./Form";

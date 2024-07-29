@@ -6,8 +6,8 @@ export class Template {
     public name: string;
     public columns: Column[];
 
-    constructor(name: string, columns: Column[]) {
-        this.id = uniqueId();
+    constructor(id: string, name: string, columns: Column[]) {
+        this.id = id;
         this.name = name;
         this.columns = columns;
     }

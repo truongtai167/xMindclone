@@ -30,17 +30,6 @@ abstract class Column {
 
     abstract setValue(value: any): void;
 
-    toJSON() {
-        return {
-            id: this.id,
-            name: this.name,
-            type: this.type,
-            value: this.value
-        };
-    }
-    toggleVisibility() {
-        this.visible = !this.visible
-    }
 }
 
 class TextColumn extends Column {
@@ -136,12 +125,6 @@ const columnClassMapping: Record<ColumnType, new (name: string) => Column> = {
     [ColumnType.Hyperlink]: HyperlinkColumn,
     [ColumnType.Rating]: RatingColumn
 
-};
-
-function createColumn(name: string, columnType: ColumnType): Column {
-    const ColumnClass = columnClassMapping[columnType];
-    return new ColumnClass(name);
 }
 
-
-export { Column, TextColumn, ImageColumn, DateColumn, ChoiceColumn, PersonColumn, YesNoColumn, NumberColumn, HyperlinkColumn, RatingColumn, ColumnType, createColumn, columnClassMapping };
+export { Column, TextColumn, ImageColumn, DateColumn, ChoiceColumn, PersonColumn, YesNoColumn, NumberColumn, HyperlinkColumn, RatingColumn, ColumnType, columnClassMapping };
