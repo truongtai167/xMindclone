@@ -99,6 +99,39 @@
               "visible": true
             }
           ]
+        },
+        {
+          "id": "181",
+          "columns": [
+            {
+              "id": "177",
+              "name": "Name",
+              "type": "Text",
+              "value": "Truong Tai",
+              "visible": true
+            },
+            {
+              "id": "178",
+              "name": "Date Of Birth",
+              "type": "Date",
+              "value": 30,
+              "visible": true
+            },
+            {
+              "id": "179",
+              "name": "Married",
+              "type": "Yes/No",
+              "value": null,
+              "visible": true
+            },
+            {
+              "id": "180",
+              "name": "Age",
+              "type": "Number",
+              "value": null,
+              "visible": true
+            }
+          ]
         }
       ],
       "views": [],

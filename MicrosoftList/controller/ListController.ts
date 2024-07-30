@@ -21,32 +21,41 @@ const ListController = {
 
         const addedColumn = microsoftListService.addColumn(id, newColumn);
         return res.status(200).json({
-            success: req ? true : false,
+            success: true,
             reponse: addedColumn
         });
     },
 
     deleteColumn: (req: Request, res: Response) => {
         const { id, columnId } = req.params;
+        if (!id) {
+            return res.status(400).json({ error: 'Missing listId' });
+        }
         microsoftListService.deleteColumn(id, columnId);
         return res.status(200).json({
-            success: req ? true : false,
+            success: true
         });
     },
 
     addRow: (req: Request, res: Response) => {
         const { id } = req.params;
         const newRow = microsoftListService.addRow(id, req.body);
+        if (!id) {
+            return res.status(400).json({ error: 'Missing listId' });
+        }
         return res.status(200).json({
-            success: !!newRow,
+            success: true,
             response: newRow
         });
     },
     deleteRow: (req: Request, res: Response) => {
         const { listId, rowId } = req.params;
+        if (!listId || !rowId) {
+            return res.status(400).json({ error: 'Missing listId or rowId' });
+        }
         microsoftListService.deleteRow(listId, rowId);
         return res.status(200).json({
-            success: req ? true : false,
+            success: true,
         });
     },
     searchRow: (req: Request, res: Response) => {
@@ -61,7 +70,7 @@ const ListController = {
         const results = microsoftListService.searchRow(searchTerm, listId);
 
         return res.status(200).json({
-            success: req ? true : false,
+            success: true,
             response: results
         });
     },
@@ -77,7 +86,7 @@ const ListController = {
         const results = microsoftListService.filterRow(listId, colName, values);
         res.status(200).json(results);
         return res.status(200).json({
-            success: req ? true : false,
+            success: true,
             response: results
         });
     },
@@ -94,7 +103,35 @@ const ListController = {
             success: true,
             response: updatedRow
         });
-    }
+    },
+
+    paginateRows: (req: Request, res: Response) => {
+        const { listId } = req.params;
+        const { page, limit, search, colName, values } = req.query
+        const pageNumber = parseInt(page as string, 10);
+        const pageSize = parseInt(limit as string, 10);
+        const valuesArray = typeof values === 'string' ? values.split(',') : (values as string[]);
+
+        const paginatedRows = microsoftListService.paginateRows(
+            listId,
+            pageNumber,
+            pageSize,
+            search as string,
+            colName as string,
+            valuesArray
+        );
+        if (paginatedRows) {
+            return res.status(200).json({
+                success: true,
+                response: paginatedRows
+            });
+        } else {
+            return res.status(404).json({
+                success: false,
+                error: 'List not found'
+            });
+        }
+    },
 
 
 };

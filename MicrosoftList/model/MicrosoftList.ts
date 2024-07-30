@@ -1,6 +1,5 @@
 import { List } from "./List"
 import { Template } from "./Template"
-import fs from 'fs';
 
 
 class MicrosoftList {

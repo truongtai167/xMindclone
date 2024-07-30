@@ -259,6 +259,59 @@ class MicrosoftListService {
         return row;
     }
 
+    paginateRows(
+        listId: string,
+        page: number,
+        limit: number,
+        search?: string,
+        colName?: string,
+        values?: any[]
+    ) {
+        this.loadFile();
+        // Find the list by ID
+        const list = this.model.lists.find(l => l.id === listId);
+        if (!list) {
+            return null;
+        }
+
+        let filteredRows = list.rows;
+
+        // Apply search if searchTerm is provided
+        if (search) {
+            const lowerCaseTerm = search.toLowerCase();
+            filteredRows = filteredRows.filter(row =>
+                row.columns.some(column =>
+                    column.value?.toString().toLowerCase().includes(lowerCaseTerm)
+                )
+            );
+        }
+
+        // Apply filter if colName and values are provided
+        if (colName && values) {
+            filteredRows = filteredRows.filter(row => {
+                const column = row.columns.find(col => col.name === colName);
+                return column ? values.includes(column.value) : false;
+            });
+        }
+
+        // Calculate pagination indices
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+
+        // Slice the rows for the current page
+        const rows = filteredRows.slice(startIndex, endIndex);
+
+        // Return paginated data
+        return {
+            rows,
+            page,
+            limit,
+            totalRows: filteredRows.length,
+            totalPages: Math.ceil(filteredRows.length / limit)
+        };
+    }
+
+
 }
 
 export { MicrosoftListService };

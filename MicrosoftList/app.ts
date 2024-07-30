@@ -16,6 +16,8 @@ app.delete('/api/lists/:listId/row/:rowId', ListController.deleteRow);
 app.get('/api/lists/:listId/search', ListController.searchRow);
 app.get('/api/lists/:listId/filter', ListController.filterRow);
 app.put('/api/lists/:listId', ListController.updateRowValue);
+app.get('/api/lists/:listId/rows', ListController.paginateRows);
+
 
 
 app.post('/api/lists', MicrosoftListController.createBlankList);
@@ -500,4 +502,125 @@ app.listen(port, () => {
  *                 error:
  *                   type: string
  *                   example: Error message here
+ */
+/**
+ * @swagger
+ * /api/lists/{listId}/paginate:
+ *   get:
+ *     summary: Paginate, Search, and Filter Rows
+ *     tags:
+ *       - List
+ *     parameters:
+ *       - in: path
+ *         name: listId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the list to retrieve rows from.
+ *       - in: query
+ *         name: page
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           format: int32
+ *           example: 1
+ *         description: The page number to retrieve.
+ *       - in: query
+ *         name: limit
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           format: int32
+ *           example: 10
+ *         description: The number of rows per page.
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Optional search term to filter rows based on column values.
+ *       - in: query
+ *         name: colName
+ *         schema:
+ *           type: string
+ *         description: Optional column name to filter rows by specific column values.
+ *       - in: query
+ *         name: values
+ *         schema:
+ *           type: string
+ *           example: value1,value2
+ *         description: Optional comma-separated list of values to filter rows by. Used with `colName`.
+ *     responses:
+ *       200:
+ *         description: Successful response with paginated rows.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 response:
+ *                   type: object
+ *                   properties:
+ *                     rows:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: rowId
+ *                           columns:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 id:
+ *                                   type: string
+ *                                   example: columnId
+ *                                 name:
+ *                                   type: string
+ *                                   example: Column Name
+ *                                 value:
+ *                                   type: string
+ *                                   example: Column Value
+ *                     page:
+ *                       type: integer
+ *                       example: 1
+ *                     limit:
+ *                       type: integer
+ *                       example: 10
+ *                     totalRows:
+ *                       type: integer
+ *                       example: 100
+ *                     totalPages:
+ *                       type: integer
+ *                       example: 10
+ *       404:
+ *         description: List not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: List not found
+ *       400:
+ *         description: Bad request due to invalid query parameters.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: Invalid query parameters
  */
