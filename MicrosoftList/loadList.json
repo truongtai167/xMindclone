@@ -13,8 +13,8 @@
         },
         {
           "id": "15",
-          "name": "Date Of Birth",
-          "type": "Date",
+          "name": "Age",
+          "type": "Text",
           "value": null,
           "visible": true
         },
@@ -27,7 +27,7 @@
         },
         {
           "id": "17",
-          "name": "Age",
+          "name": "Abc",
           "type": "Number",
           "value": null,
           "visible": true
@@ -46,8 +46,8 @@
             },
             {
               "id": "50",
-              "name": "Date Of Birth",
-              "type": "Date",
+              "name": "Age",
+              "type": "Text",
               "value": 30,
               "visible": true
             },
@@ -60,7 +60,7 @@
             },
             {
               "id": "52",
-              "name": "Age",
+              "name": "Abc",
               "type": "Number",
               "value": null,
               "visible": true
@@ -79,8 +79,8 @@
             },
             {
               "id": "84",
-              "name": "Date Of Birth",
-              "type": "Date",
+              "name": "Age",
+              "type": "Text",
               "value": 30,
               "visible": true
             },
@@ -93,7 +93,7 @@
             },
             {
               "id": "86",
-              "name": "Age",
+              "name": "Abc",
               "type": "Number",
               "value": null,
               "visible": true
@@ -112,8 +112,8 @@
             },
             {
               "id": "178",
-              "name": "Date Of Birth",
-              "type": "Date",
+              "name": "Age",
+              "type": "Text",
               "value": 30,
               "visible": true
             },
@@ -126,7 +126,7 @@
             },
             {
               "id": "180",
-              "name": "Age",
+              "name": "Abc",
               "type": "Number",
               "value": null,
               "visible": true
@@ -138,19 +138,11 @@
       "forms": []
     },
     {
-      "id": "29",
-      "name": "List 14",
-      "columns": [],
-      "rows": [],
-      "views": [],
-      "forms": []
-    },
-    {
-      "id": "16",
+      "id": "27",
       "name": "List 14",
       "columns": [
         {
-          "id": "33",
+          "id": "82",
           "name": "Text Column",
           "type": "Text",
           "value": null,
@@ -158,147 +150,6 @@
         }
       ],
       "rows": [],
-      "views": [],
-      "forms": []
-    },
-    {
-      "id": "32",
-      "name": "List 14",
-      "columns": [
-        {
-          "id": "48",
-          "name": "Text Column",
-          "type": "Text",
-          "value": null,
-          "visible": true
-        }
-      ],
-      "rows": [
-        {
-          "id": "81",
-          "columns": [
-            {
-              "id": "80",
-              "name": "Text Column",
-              "type": "Text",
-              "value": null,
-              "visible": true
-            }
-          ]
-        },
-        {
-          "id": "119",
-          "columns": [
-            {
-              "id": "118",
-              "name": "Text Column",
-              "type": "Text",
-              "value": "Truong Tai",
-              "visible": true
-            }
-          ]
-        }
-      ],
-      "views": [],
-      "forms": []
-    },
-    {
-      "id": "140",
-      "name": "List 14",
-      "columns": [
-        {
-          "id": "183",
-          "name": "Text Column",
-          "type": "Text",
-          "value": null,
-          "visible": true
-        }
-      ],
-      "rows": [
-        {
-          "id": "228",
-          "columns": [
-            {
-              "id": "227",
-              "name": "Text Column",
-              "type": "Text",
-              "value": null,
-              "visible": true
-            }
-          ]
-        }
-      ],
-      "views": [],
-      "forms": []
-    },
-    {
-      "id": "69",
-      "name": "List from template1",
-      "columns": [
-        {
-          "id": "2",
-          "name": "Column 1",
-          "type": "Text",
-          "value": null,
-          "visible": true
-        },
-        {
-          "id": "3",
-          "name": "Column 2",
-          "type": "Number",
-          "value": null,
-          "visible": true
-        },
-        {
-          "id": "4",
-          "name": "Column 3",
-          "type": "Date",
-          "value": null,
-          "visible": true
-        },
-        {
-          "id": "155",
-          "name": "Text Column",
-          "type": "Text",
-          "value": null,
-          "visible": true
-        }
-      ],
-      "rows": [
-        {
-          "id": "276",
-          "columns": [
-            {
-              "id": "272",
-              "name": "Column 1",
-              "type": "Text",
-              "value": "Khoi Nguyen",
-              "visible": true
-            },
-            {
-              "id": "273",
-              "name": "Column 2",
-              "type": "Number",
-              "value": 30,
-              "visible": true
-            },
-            {
-              "id": "274",
-              "name": "Column 3",
-              "type": "Date",
-              "value": null,
-              "visible": true
-            },
-            {
-              "id": "275",
-              "name": "Text Column",
-              "type": "Text",
-              "value": null,
-              "visible": true
-            }
-          ]
-        }
-      ],
       "views": [],
       "forms": []
     }
