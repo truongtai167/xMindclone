@@ -507,7 +507,7 @@ app.listen(port, () => {
  */
 /**
  * @swagger
- * /api/lists/{listId}/paginate:
+ * /api/lists/{listId}/rows:
  *   get:
  *     summary: Paginate, Search, and Filter Rows
  *     tags:

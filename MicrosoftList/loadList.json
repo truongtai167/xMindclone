@@ -31,6 +31,13 @@
           "type": "Number",
           "value": null,
           "visible": true
+        },
+        {
+          "id": "85",
+          "name": "Choice Column",
+          "type": "Choice",
+          "value": [],
+          "visible": true
         }
       ],
       "rows": [
@@ -63,6 +70,13 @@
               "name": "Abc",
               "type": "Number",
               "value": null,
+              "visible": true
+            },
+            {
+              "id": "86",
+              "name": "Choice Column",
+              "type": "Choice",
+              "value": [],
               "visible": true
             }
           ]
@@ -97,6 +111,13 @@
               "type": "Number",
               "value": null,
               "visible": true
+            },
+            {
+              "id": "87",
+              "name": "Choice Column",
+              "type": "Choice",
+              "value": [],
+              "visible": true
             }
           ]
         },
@@ -129,6 +150,13 @@
               "name": "Abc",
               "type": "Number",
               "value": null,
+              "visible": true
+            },
+            {
+              "id": "88",
+              "name": "Choice Column",
+              "type": "Choice",
+              "value": [],
               "visible": true
             }
           ]
