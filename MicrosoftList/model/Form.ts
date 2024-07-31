@@ -15,9 +15,6 @@ class Form {
         this.list = list
     }
 
-    submitForm(columnValues: { [columnId: string]: any } = {}) {
-        return this.list.addRow(columnValues)
-    }
 
 }
 export { Form }

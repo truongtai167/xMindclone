@@ -1,0 +1,243 @@
+{
+  "lists": [
+    {
+      "id": "12",
+      "name": "List1",
+      "columns": [
+        {
+          "id": "14",
+          "name": "Name",
+          "type": "Text",
+          "value": null,
+          "visible": true
+        },
+        {
+          "id": "15",
+          "name": "Age",
+          "type": "Text",
+          "value": null,
+          "visible": true
+        },
+        {
+          "id": "16",
+          "name": "Married",
+          "type": "Yes/No",
+          "value": null,
+          "visible": true
+        },
+        {
+          "id": "17",
+          "name": "Abc",
+          "type": "Number",
+          "value": null,
+          "visible": true
+        },
+        {
+          "id": "85",
+          "name": "Choice Column",
+          "type": "Choice",
+          "value": [],
+          "visible": true
+        }
+      ],
+      "rows": [
+        {
+          "id": "53",
+          "columns": [
+            {
+              "id": "49",
+              "name": "Name",
+              "type": "Text",
+              "value": "Tai Dang",
+              "visible": true
+            },
+            {
+              "id": "50",
+              "name": "Age",
+              "type": "Text",
+              "value": 30,
+              "visible": true
+            },
+            {
+              "id": "51",
+              "name": "Married",
+              "type": "Yes/No",
+              "value": null,
+              "visible": true
+            },
+            {
+              "id": "52",
+              "name": "Abc",
+              "type": "Number",
+              "value": null,
+              "visible": true
+            },
+            {
+              "id": "86",
+              "name": "Choice Column",
+              "type": "Choice",
+              "value": [],
+              "visible": true
+            }
+          ]
+        },
+        {
+          "id": "87",
+          "columns": [
+            {
+              "id": "83",
+              "name": "Name",
+              "type": "Text",
+              "value": "Khoi Nguyen",
+              "visible": true
+            },
+            {
+              "id": "84",
+              "name": "Age",
+              "type": "Text",
+              "value": 30,
+              "visible": true
+            },
+            {
+              "id": "85",
+              "name": "Married",
+              "type": "Yes/No",
+              "value": null,
+              "visible": true
+            },
+            {
+              "id": "86",
+              "name": "Abc",
+              "type": "Number",
+              "value": null,
+              "visible": true
+            },
+            {
+              "id": "87",
+              "name": "Choice Column",
+              "type": "Choice",
+              "value": [],
+              "visible": true
+            }
+          ]
+        },
+        {
+          "id": "181",
+          "columns": [
+            {
+              "id": "177",
+              "name": "Name",
+              "type": "Text",
+              "value": "Truong Tai",
+              "visible": true
+            },
+            {
+              "id": "178",
+              "name": "Age",
+              "type": "Text",
+              "value": 30,
+              "visible": true
+            },
+            {
+              "id": "179",
+              "name": "Married",
+              "type": "Yes/No",
+              "value": null,
+              "visible": true
+            },
+            {
+              "id": "180",
+              "name": "Abc",
+              "type": "Number",
+              "value": null,
+              "visible": true
+            },
+            {
+              "id": "88",
+              "name": "Choice Column",
+              "type": "Choice",
+              "value": [],
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "views": [],
+      "forms": []
+    },
+    {
+      "id": "27",
+      "name": "List 14",
+      "columns": [
+        {
+          "id": "82",
+          "name": "Text Column",
+          "type": "Text",
+          "value": null,
+          "visible": true
+        }
+      ],
+      "rows": [],
+      "views": [],
+      "forms": []
+    }
+  ],
+  "favoriteLists": [],
+  "recentLists": [],
+  "templates": [
+    {
+      "id": "1",
+      "name": "Sample Template",
+      "columns": [
+        {
+          "id": "2",
+          "name": "Column 1",
+          "type": "Text",
+          "value": null,
+          "visible": true
+        },
+        {
+          "id": "3",
+          "name": "Column 2",
+          "type": "Number",
+          "value": null,
+          "visible": true
+        },
+        {
+          "id": "4",
+          "name": "Column 3",
+          "type": "Date",
+          "value": null,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Sample Template 2",
+      "columns": [
+        {
+          "id": "2",
+          "name": "Column 1",
+          "type": "Text",
+          "value": null,
+          "visible": true
+        },
+        {
+          "id": "3",
+          "name": "Column 2",
+          "type": "Number",
+          "value": null,
+          "visible": true
+        },
+        {
+          "id": "4",
+          "name": "Column 3",
+          "type": "Date",
+          "value": null,
+          "visible": true
+        }
+      ]
+    }
+  ]
+}
