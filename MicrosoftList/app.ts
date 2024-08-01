@@ -9,13 +9,13 @@ const port = 3000;
 
 app.use(bodyParser.json());
 
-app.post('/api/lists/col/:id', ListController.addColumn);
+app.post('/api/lists/:id/col', ListController.addColumn);
 app.delete('/api/lists/:id/columns/:columnId', ListController.deleteColumn);
 app.post('/api/lists/row/:id', ListController.addRow);
 app.delete('/api/lists/:listId/row/:rowId', ListController.deleteRow);
 app.get('/api/lists/:listId/search', ListController.searchRow);
 app.get('/api/lists/:listId/filter', ListController.filterRow);
-app.put('/api/lists/:listId/row/:rowId/col/:colId', ListController.updateRowValue);
+app.put('/api/lists/:listId/row/:rowId/col/', ListController.updateRowValue);
 app.get('/api/lists/:listId/rows', ListController.paginateRows);
 app.put('/api/lists/:listId/col/:colId', ListController.updateColumn);
 

@@ -8,8 +8,8 @@ const ListController = {
     addColumn: (req: Request, res: Response) => {
         try {
             const { id } = req.params;
-            const { name, type } = req.body;
-            const addedColumn = microsoftListService.addColumn(id, name, type);
+            const { name, type, choices } = req.body;
+            const addedColumn = microsoftListService.addColumn(id, name, type, choices);
             return res.status(200).json({
                 success: true,
                 response: addedColumn
@@ -107,10 +107,10 @@ const ListController = {
 
     updateRowValue: (req: Request, res: Response) => {
         try {
-            const { listId, rowId, colId } = req.params;
-            const { value } = req.body;
+            const { listId, rowId } = req.params;
+            const { colName, value } = req.body;
 
-            const updatedRow = microsoftListService.updateRowValue(listId, rowId, colId, value);
+            const updatedRow = microsoftListService.updateRowValue(listId, rowId, colName, value);
             return res.status(200).json({
                 success: true,
                 response: updatedRow

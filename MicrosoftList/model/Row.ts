@@ -3,10 +3,10 @@ import { Column } from "./Column";
 
 export class Row {
     public id: string;
-    public columns: Column[];
+    public data: Record<string, any>;
 
-    constructor(columns: Column[] = []) {
+    constructor(columnValues: Record<string, any>) {
         this.id = uniqueId();
-        this.columns = columns
+        this.data = columnValues;
     }
 }

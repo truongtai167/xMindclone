@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { List } from "../model/List";
 import { MicrosoftList } from "../model/MicrosoftList";
-import { Column, columnClassMapping, ColumnType } from '../model/Column';
+import { Column, columnCreationMapping, ColumnType } from '../model/Column';
 import { Row } from '../model/Row';
 import { Template } from '../model/Template';
 
@@ -9,7 +9,6 @@ class MicrosoftListService {
     private model: MicrosoftList;
     private jsonFilePath: string = './MicrosoftList/loadList.json';
     private templateFilePath: string = './MicrosoftList/template.json';
-
 
     constructor(model: MicrosoftList) {
         this.model = model;
@@ -20,6 +19,7 @@ class MicrosoftListService {
         const jsonData = JSON.parse(data);
         const templateData = fs.readFileSync(this.templateFilePath, 'utf8');
         const templateJsonData = JSON.parse(templateData);
+
         const lists = jsonData.lists.map((list: any) => this.initializeLists(list));
         this.model = new MicrosoftList();
         this.model.lists = lists;
@@ -31,7 +31,7 @@ class MicrosoftListService {
     initializeTemplates(templateJsonData: { id: string, name: string, columns: { id: string, type: string, name: string }[] }[]): void {
         this.model.templates = templateJsonData.map(t => {
             const columns = t.columns.map(col => {
-                const ColumnClass = columnClassMapping[col.type];
+                const ColumnClass = columnCreationMapping[col.type];
                 if (!ColumnClass) {
                     throw new Error(`Unknown column type: ${col.type}`);
                 }
@@ -43,44 +43,49 @@ class MicrosoftListService {
             return new Template(t.id, t.name, columns);
         });
     }
+
     initializeLists(json: any): List {
         const list = new List(json.name);
         list.id = json.id;
-        // Columns
+
+        // Initialize columns
         list.columns = json.columns.map((col: any) => {
-            const ColumnClass = columnClassMapping[col.type];
+            // Get the Column class from the mapping
+            const ColumnClass = columnCreationMapping[col.type];
             if (!ColumnClass) {
                 throw new Error(`Unknown column type: ${col.type}`);
             }
-            const columnInstance = new ColumnClass(col.name);
-            columnInstance.id = col.id; // Set the id from JSON
-            columnInstance.value = col.value; // Set the value from JSON
+
+            // Create a new column instance
+            const columnInstance = new ColumnClass(col.name, col.choices || []);
+
+            columnInstance.id = col.id;
             return columnInstance;
         });
 
-        // Rows
+        // Initialize rows
         list.rows = json.rows.map((row: any) => {
-            const rowColumns = row.columns.map((col: Column) => {
-                const columnValue = row.columns.find((colValue: any) => colValue.id === col.id)?.value;
-                const ColumnClass = columnClassMapping[col.type];
-                if (!ColumnClass) {
-                    throw new Error(`Unknown column type: ${col.type}`);
-                }
-                const columnInstance = new ColumnClass(col.name);
-                columnInstance.id = col.id;
-                columnInstance.value = columnValue;
-                return columnInstance;
+            // Create a mapping of column IDs to values
+            const datas = row.data.map(col => {
+                return {
+                    colName: col.colName,
+                    value: col.value
+                };
             });
-            const rowInstance = new Row(rowColumns);
+            // Create the Row instance with the data
+            const rowInstance = new Row(datas);
             rowInstance.id = row.id;
             return rowInstance;
         });
         return list;
     }
+
+
     getLists() {
-        this.loadFile()
+        this.loadFile();
         return this.model.lists;
     }
+
     getListById(listId: string): List | null {
         this.loadFile();
         const list = this.model.lists.find(l => l.id === listId);
@@ -93,9 +98,10 @@ class MicrosoftListService {
     }
 
     getTemplates() {
-        this.loadFile()
+        this.loadFile();
         return this.model.templates;
     }
+
     saveFile(data: any): void {
         const jsonData = JSON.stringify(data, null, 2);
         fs.writeFileSync(this.jsonFilePath, jsonData, 'utf8');
@@ -107,11 +113,12 @@ class MicrosoftListService {
         }
         const blanklist = new List(name);
         this.model.lists.push(blanklist);
-        this.saveFile(this.model)
+        this.saveFile(this.model);
         return blanklist;
     }
+
     createListFromTemplate(templateId: string, listName: string): List {
-        this.loadFile()
+        this.loadFile();
         const template = this.model.templates.find(t => t.id === templateId);
         if (!template) {
             throw new Error(`Template with ID ${templateId} not found.`);
@@ -119,49 +126,53 @@ class MicrosoftListService {
         if (!listName) {
             throw new Error("List name cannot be empty");
         }
-        const newList = new List(listName, template.columns)
+        const newList = new List(listName, template.columns);
         this.model.lists.push(newList);
-        this.saveFile(this.model)
+        this.saveFile(this.model);
         return newList;
     }
 
-
     deleteList(listId: string): void {
-        const deletelist = this.model.lists.find(s => s.id === listId)
+        const deletelist = this.model.lists.find(s => s.id === listId);
         if (!deletelist) {
             throw new Error(`List with ID ${listId} not found`);
         }
         this.model.lists = this.model.lists.filter(s => s.id !== listId);
-        this.saveFile(this.model)
+        this.saveFile(this.model);
     }
 
-
-    addColumn(listId: string, name: string, type: string): Column | null {
+    addColumn(listId: string, name: string, type: string, choices: any): Column | null {
         this.loadFile();
-
 
         // Find the list by ID
         const list = this.model.lists.find(l => l.id === listId);
         if (!list) {
             throw new Error(`List with ID ${listId} not found.`);
         }
+
         // Validate and convert column type
         const columnType = ColumnType[type as keyof typeof ColumnType];
-        // Create a new column instance
-        const ColumnClass = columnClassMapping[columnType];
-        if (!ColumnClass) {
-            throw new Error(`Unknown column class for type: ${columnType}`);
+
+        const ColumnClass = columnCreationMapping[columnType];
+
+        const columnExists = list.columns.some(col => col.name === name);
+        if (columnExists) {
+            throw new Error(`A column with the name "${name}" already exists.`);
         }
+        const parsedChoices = typeof choices === 'string'
+            ? choices.split(',').map(choice => choice.trim())
+            : choices;
 
-        const newColumn = new ColumnClass(name);
-        // Add the new column to the list's columns
+        const newColumn = new ColumnClass(name, parsedChoices);
+
+        // Add the new column to the list
         list.columns.push(newColumn);
-
         // Add the new column to each row
         list.rows.forEach(row => {
-            const newColumnInstance = new ColumnClass(name);
-            // Copy the new column's ID from the list's columns to maintain consistency
-            row.columns.push(newColumnInstance);
+            row.data.push({
+                colName: newColumn.name,
+                value: null // Initialize value to null
+            });
         });
 
         // Save the updated model
@@ -169,81 +180,88 @@ class MicrosoftListService {
 
         return newColumn;
     }
+
     deleteColumn(listId: string, columnId: string): void {
-        this.loadFile()
+        this.loadFile();
         const list = this.model.lists.find(l => l.id === listId);
 
         if (!list) {
             throw new Error(`List with ID ${listId} not found.`);
         }
-        const columnToDelete = list.columns.find(col => col.id === columnId);
         list.columns = list.columns.filter(col => col.id !== columnId);
         list.rows.forEach(row => {
-            row.columns = row.columns.filter(col => col.name !== columnToDelete?.name);
+            row.data = row.data.filter(cv => cv.id !== columnId);
         });
-        this.saveFile(this.model)
+        this.saveFile(this.model);
     }
 
-    addRow(listId: string, rowData: { [key: string]: any } = {}): Row | null {
-        this.loadFile()
-        const list = this.model.lists.find(l => l.id === listId);
+    addRow(listId: string, rowData: { colName: string, value: any }[]): Row | null {
+        this.loadFile();
 
+        // Find the list by ID
+        const list = this.model.lists.find(l => l.id === listId);
         if (!list) {
             throw new Error(`List with ID ${listId} not found.`);
         }
-        const rowColumns = list.columns.map(col => {
-            const ColumnClass = columnClassMapping[col.type];
-            if (!ColumnClass) {
-                throw new Error(`Unknown column type: ${col.type}`);
-            }
-            const columnInstance = new ColumnClass(col.name);
-            columnInstance.value = rowData[col.id] !== undefined ? rowData[col.id] : null; // Set value from rowData or null
-            return columnInstance;
+
+        // Create a new row with column data
+        const newRowData = list.columns.map(col => {
+            // Find the corresponding value for the column name
+            const columnValue = rowData.find(data => data.colName === col.name);
+            return {
+                colName: col.name,
+                value: columnValue ? columnValue.value : null // Use the value if found, otherwise null
+            };
         });
 
-        const newRow = new Row(rowColumns);
+        // Create and add the new row to the list
+        const newRow = new Row(newRowData);
         list.rows.push(newRow);
-        this.saveFile(this.model)
+
+        // Save the updated model
+        this.saveFile(this.model);
+
         return newRow;
     }
 
     deleteRow(listId: string, rowId: string): void {
-        this.loadFile()
+        this.loadFile();
         const list = this.model.lists.find(l => l.id === listId);
         if (!list) {
             throw new Error(`List with ID ${listId} not found.`);
         }
         list.rows = list.rows.filter(row => row.id !== rowId);
-        this.saveFile(this.model)
+        this.saveFile(this.model);
     }
+
     searchRow(searchTerm: string, listId: string): Row[] {
-        this.loadFile()
+        this.loadFile();
         const lowerCaseTerm = searchTerm.toLowerCase();
         const list = this.model.lists.find(l => l.id === listId);
         if (!list) {
             throw new Error(`List with ID ${listId} not found.`);
         }
         return list.rows.filter(row =>
-            row.columns.some(column =>
-                column.value?.toString().toLowerCase().includes(lowerCaseTerm)
+            row.data.some(columnData =>
+                // Ensure columnData.value is not null or undefined before converting to string
+                columnData.value?.toString().toLowerCase().includes(lowerCaseTerm)
             )
         );
     }
 
     filterRow(listId: string, colName: string, values: any[]): Row[] {
-        this.loadFile()
+        this.loadFile();
         const list = this.model.lists.find(l => l.id === listId);
         if (!list) {
             throw new Error(`List with ID ${listId} not found.`);
         }
         return list.rows.filter(row => {
-            const column = row.columns.find(col => col.name === colName);
-            return column ? values.includes(column.value) : false;
+            const columnData = row.data.find(data => data.colName === colName);
+            return columnData ? values.includes(columnData.value) : false;
         });
     }
 
-
-    updateRowValue(listId: string, rowId: string, columnId: string, value: any): Row | null {
+    updateRowValue(listId: string, rowId: string, columnName: string, value: any): Row | null {
         this.loadFile();
 
         // Find the list by ID
@@ -256,15 +274,13 @@ class MicrosoftListService {
         if (!row) {
             throw new Error(`Row with ID ${rowId} not found.`);
         }
-        // Update the row columns
-        const column = row.columns.find(col => col.id === columnId);
-        if (!column) {
-            throw new Error(`Column with ID ${columnId} not found.`);
+        // Update the row column value
+        const column = list.columns.find(col => col.name === columnName);
+        const columnData = row.data.find(d => d.colName === columnName);
+        if (!(column?.validateValue(value))) {
+            throw new Error(`Invalid value `);
         }
-        // Update the column value
-
-        column.value = value;
-        // Save changes to the model
+        columnData.value = value;
         this.saveFile(this.model);
         return row;
     }
@@ -284,40 +300,28 @@ class MicrosoftListService {
             throw new Error(`List with ID ${listId} not found.`);
         }
 
-        let filteredRows = list.rows;
+        // Get all rows
+        let rows = list.rows;
 
-        // Apply search if searchTerm is provided
+        // Apply search filter
         if (search) {
-            const lowerCaseTerm = search.toLowerCase();
-            filteredRows = filteredRows.filter(row =>
-                row.columns.some(column =>
-                    column.value?.toString().toLowerCase().includes(lowerCaseTerm)
-                )
-            );
+            rows = this.searchRow(search, listId);
         }
 
-        // Apply filter if colName and values are provided
+        // Apply column filter
         if (colName && values) {
-            filteredRows = filteredRows.filter(row => {
-                const column = row.columns.find(col => col.name === colName);
-                return column ? values.includes(column.value) : false;
-            });
+            rows = this.filterRow(listId, colName, values);
         }
 
-        // Calculate pagination indices
+        // Paginate rows
         const startIndex = (page - 1) * limit;
-        const endIndex = page * limit;
+        const paginatedRows = rows.slice(startIndex, startIndex + limit);
 
-        // Slice the rows for the current page
-        const rows = filteredRows.slice(startIndex, endIndex);
-
-        // Return paginated data
         return {
-            rows,
+            total: rows.length,
             page,
             limit,
-            totalRows: filteredRows.length,
-            totalPages: Math.ceil(filteredRows.length / limit)
+            rows: paginatedRows
         };
     }
 
@@ -333,29 +337,23 @@ class MicrosoftListService {
         // Find the column by ID
         const column = list.columns.find(col => col.id === columnId);
         if (!column) {
-            throw new Error(`List with ID ${listId} not found.`);
+            throw new Error(`Column with ID ${columnId} not found.`);
         }
 
         // Update column properties
+        column.name = name;
+        column.type = ColumnType[type as keyof typeof ColumnType];
+
+        // Update column in rows
         list.rows.forEach(row => {
-            const existingColumn = row.columns.find(col => col.name === column.name);
-            if (existingColumn) {
-                existingColumn.name = name
-                const columnType = ColumnType[type as keyof typeof ColumnType];
-                existingColumn.type = columnType
+            if (row.data[columnId] !== undefined) {
+                row.data[columnId] = row.data[columnId]; // Ensure value is updated if necessary
             }
         });
-
-        const columnType = ColumnType[type as keyof typeof ColumnType];
-        column.name = name;
-        column.type = columnType;
-        // Update the column in all rows
 
         this.saveFile(this.model);
         return column;
     }
-
-
 }
 
 export { MicrosoftListService };

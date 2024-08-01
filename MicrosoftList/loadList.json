@@ -5,179 +5,194 @@
       "name": "List1",
       "columns": [
         {
-          "id": "14",
-          "name": "Name",
-          "type": "Text",
-          "value": null,
-          "visible": true
-        },
-        {
-          "id": "15",
-          "name": "Age",
-          "type": "Text",
-          "value": null,
-          "visible": true
-        },
-        {
           "id": "16",
           "name": "Married",
           "type": "Yes/No",
-          "value": null,
           "visible": true
         },
         {
           "id": "17",
-          "name": "Abc",
+          "name": "Age",
           "type": "Number",
-          "value": null,
           "visible": true
         },
         {
-          "id": "85",
-          "name": "Choice Column",
+          "id": "52",
+          "name": "Choice column",
           "type": "Choice",
-          "value": [],
+          "visible": true,
+          "choices": [
+            "Choice 1",
+            "Choice 2",
+            "Choice 3"
+          ]
+        },
+        {
+          "id": "70",
+          "name": "Profile Link",
+          "type": "Hyperlink",
+          "visible": true
+        },
+        {
+          "id": "96",
+          "name": "Social Link",
+          "type": "Hyperlink",
+          "visible": true
+        },
+        {
+          "id": "66",
+          "name": "Name",
+          "type": "Text",
           "visible": true
         }
       ],
       "rows": [
         {
-          "id": "53",
-          "columns": [
+          "id": "59",
+          "data": [
             {
-              "id": "49",
-              "name": "Name",
-              "type": "Text",
-              "value": "Tai Dang",
-              "visible": true
+              "colName": "Married",
+              "value": true
             },
             {
-              "id": "50",
-              "name": "Age",
-              "type": "Text",
-              "value": 30,
-              "visible": true
+              "colName": "Age",
+              "value": 22
             },
             {
-              "id": "51",
-              "name": "Married",
-              "type": "Yes/No",
-              "value": null,
-              "visible": true
+              "colName": "Choice column",
+              "value": "Choice 1"
             },
             {
-              "id": "52",
-              "name": "Abc",
-              "type": "Number",
-              "value": null,
-              "visible": true
+              "colName": "Profile Link",
+              "value": "https://www.youtube.com/, Tai Profile"
             },
             {
-              "id": "86",
-              "name": "Choice Column",
-              "type": "Choice",
-              "value": [],
-              "visible": true
+              "colName": "Social Link",
+              "value": null
+            },
+            {
+              "colName": "Name",
+              "value": "Tai Dang"
             }
           ]
         },
         {
-          "id": "87",
-          "columns": [
+          "id": "123",
+          "data": [
             {
-              "id": "83",
-              "name": "Name",
-              "type": "Text",
-              "value": "Khoi Nguyen",
-              "visible": true
+              "colName": "Married",
+              "value": true
             },
             {
-              "id": "84",
-              "name": "Age",
-              "type": "Text",
-              "value": 30,
-              "visible": true
+              "colName": "Age",
+              "value": 30
             },
             {
-              "id": "85",
-              "name": "Married",
-              "type": "Yes/No",
-              "value": null,
-              "visible": true
+              "colName": "Choice column",
+              "value": "Choice 1"
             },
             {
-              "id": "86",
-              "name": "Abc",
-              "type": "Number",
-              "value": null,
-              "visible": true
+              "colName": "Profile Link",
+              "value": "https://www.youtube.com/"
             },
             {
-              "id": "87",
-              "name": "Choice Column",
-              "type": "Choice",
-              "value": [],
-              "visible": true
+              "colName": "Social Link",
+              "value": null
+            },
+            {
+              "colName": "Name",
+              "value": "Khoi Nguyen"
             }
           ]
         },
         {
-          "id": "181",
-          "columns": [
+          "id": "65",
+          "data": [
             {
-              "id": "177",
-              "name": "Name",
-              "type": "Text",
-              "value": "Truong Tai",
-              "visible": true
+              "colName": "Married",
+              "value": null
             },
             {
-              "id": "178",
-              "name": "Age",
-              "type": "Text",
-              "value": 30,
-              "visible": true
+              "colName": "Age",
+              "value": 30
             },
             {
-              "id": "179",
-              "name": "Married",
-              "type": "Yes/No",
-              "value": null,
-              "visible": true
+              "colName": "Choice column",
+              "value": null
             },
             {
-              "id": "180",
-              "name": "Abc",
-              "type": "Number",
-              "value": null,
-              "visible": true
+              "colName": "Profile Link",
+              "value": null
             },
             {
-              "id": "88",
-              "name": "Choice Column",
-              "type": "Choice",
-              "value": [],
-              "visible": true
+              "colName": "Social Link",
+              "value": "https://github.com/johnpapa/angular-styleguide?tab=readme-ov-file, papalink"
+            },
+            {
+              "colName": "Name",
+              "value": "Truong Tai"
+            }
+          ]
+        },
+        {
+          "id": "17",
+          "data": [
+            {
+              "colName": "Married",
+              "value": null
+            },
+            {
+              "colName": "Age",
+              "value": 30
+            },
+            {
+              "colName": "Choice column",
+              "value": null
+            },
+            {
+              "colName": "Profile Link",
+              "value": null
+            },
+            {
+              "colName": "Social Link",
+              "value": "https://github.com/johnpapa/angular-styleguide?tab=readme-ov-file, papalink"
+            },
+            {
+              "colName": "Name",
+              "value": "Truong Tai"
+            }
+          ]
+        },
+        {
+          "id": "52",
+          "data": [
+            {
+              "colName": "Married",
+              "value": null
+            },
+            {
+              "colName": "Age",
+              "value": 30
+            },
+            {
+              "colName": "Choice column",
+              "value": null
+            },
+            {
+              "colName": "Profile Link",
+              "value": null
+            },
+            {
+              "colName": "Social Link",
+              "value": "https://github.com/johnpapa/angular-styleguide?tab=readme-ov-file, papalink"
+            },
+            {
+              "colName": "Name",
+              "value": "Truong Tai"
             }
           ]
         }
       ],
-      "views": [],
-      "forms": []
-    },
-    {
-      "id": "27",
-      "name": "List 14",
-      "columns": [
-        {
-          "id": "82",
-          "name": "Text Column",
-          "type": "Text",
-          "value": null,
-          "visible": true
-        }
-      ],
-      "rows": [],
       "views": [],
       "forms": []
     }
@@ -193,21 +208,18 @@
           "id": "2",
           "name": "Column 1",
           "type": "Text",
-          "value": null,
           "visible": true
         },
         {
           "id": "3",
           "name": "Column 2",
           "type": "Number",
-          "value": null,
           "visible": true
         },
         {
           "id": "4",
           "name": "Column 3",
           "type": "Date",
-          "value": null,
           "visible": true
         }
       ]
@@ -220,21 +232,18 @@
           "id": "2",
           "name": "Column 1",
           "type": "Text",
-          "value": null,
           "visible": true
         },
         {
           "id": "3",
           "name": "Column 2",
           "type": "Number",
-          "value": null,
           "visible": true
         },
         {
           "id": "4",
           "name": "Column 3",
           "type": "Date",
-          "value": null,
           "visible": true
         }
       ]
