@@ -1,48 +1,49 @@
 [
     {
-        "name": "Project Template",
+        "id": "1",
+        "name": "Sample Template",
         "columns": [
             {
-                "type": "TextColumn",
-                "name": "Task"
+                "id": "2",
+                "name": "Column 1",
+                "type": "Text",
+                "value": null
             },
             {
-                "type": "DateColumn",
-                "name": "Due Date"
+                "id": "3",
+                "name": "Column 2",
+                "type": "Number",
+                "value": null
+            },
+            {
+                "id": "4",
+                "name": "Column 3",
+                "type": "Date",
+                "value": null
             }
         ]
     },
     {
-        "name": "Contact List Template",
+        "id": "2",
+        "name": "Sample Template 2",
         "columns": [
             {
-                "type": "TextColumn",
-                "name": "Name"
+                "id": "2",
+                "name": "Column 1",
+                "type": "Text",
+                "value": null
             },
             {
-                "type": "HyperlinkColumn",
-                "name": "Email"
+                "id": "3",
+                "name": "Column 2",
+                "type": "Number",
+                "value": null
             },
             {
-                "type": "TextColumn",
-                "name": "Phone Number"
-            }
-        ]
-    },
-    {
-        "name": "Inventory Template",
-        "columns": [
-            {
-                "type": "TextColumn",
-                "name": "Item"
-            },
-            {
-                "type": "NumberColumn",
-                "name": "Quantity"
-            },
-            {
-                "type": "TextColumn",
-                "name": "Price"
+                "id": "4",
+                "name": "Column 3",
+                "type": "Date",
+                "value": null
             }
         ]
     }

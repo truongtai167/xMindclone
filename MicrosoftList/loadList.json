@@ -1,0 +1,252 @@
+{
+  "lists": [
+    {
+      "id": "12",
+      "name": "List1",
+      "columns": [
+        {
+          "id": "16",
+          "name": "Married",
+          "type": "Yes/No",
+          "visible": true
+        },
+        {
+          "id": "17",
+          "name": "Age",
+          "type": "Number",
+          "visible": true
+        },
+        {
+          "id": "52",
+          "name": "Choice column",
+          "type": "Choice",
+          "visible": true,
+          "choices": [
+            "Choice 1",
+            "Choice 2",
+            "Choice 3"
+          ]
+        },
+        {
+          "id": "70",
+          "name": "Profile Link",
+          "type": "Hyperlink",
+          "visible": true
+        },
+        {
+          "id": "96",
+          "name": "Social Link",
+          "type": "Hyperlink",
+          "visible": true
+        },
+        {
+          "id": "66",
+          "name": "Name",
+          "type": "Text",
+          "visible": true
+        }
+      ],
+      "rows": [
+        {
+          "id": "59",
+          "data": [
+            {
+              "colName": "Married",
+              "value": true
+            },
+            {
+              "colName": "Age",
+              "value": 22
+            },
+            {
+              "colName": "Choice column",
+              "value": "Choice 1"
+            },
+            {
+              "colName": "Profile Link",
+              "value": "https://www.youtube.com/, Tai Profile"
+            },
+            {
+              "colName": "Social Link",
+              "value": null
+            },
+            {
+              "colName": "Name",
+              "value": "Tai Dang"
+            }
+          ]
+        },
+        {
+          "id": "123",
+          "data": [
+            {
+              "colName": "Married",
+              "value": true
+            },
+            {
+              "colName": "Age",
+              "value": 30
+            },
+            {
+              "colName": "Choice column",
+              "value": "Choice 1"
+            },
+            {
+              "colName": "Profile Link",
+              "value": "https://www.youtube.com/"
+            },
+            {
+              "colName": "Social Link",
+              "value": null
+            },
+            {
+              "colName": "Name",
+              "value": "Khoi Nguyen"
+            }
+          ]
+        },
+        {
+          "id": "65",
+          "data": [
+            {
+              "colName": "Married",
+              "value": null
+            },
+            {
+              "colName": "Age",
+              "value": 30
+            },
+            {
+              "colName": "Choice column",
+              "value": null
+            },
+            {
+              "colName": "Profile Link",
+              "value": null
+            },
+            {
+              "colName": "Social Link",
+              "value": "https://github.com/johnpapa/angular-styleguide?tab=readme-ov-file, papalink"
+            },
+            {
+              "colName": "Name",
+              "value": "Truong Tai"
+            }
+          ]
+        },
+        {
+          "id": "17",
+          "data": [
+            {
+              "colName": "Married",
+              "value": null
+            },
+            {
+              "colName": "Age",
+              "value": 30
+            },
+            {
+              "colName": "Choice column",
+              "value": null
+            },
+            {
+              "colName": "Profile Link",
+              "value": null
+            },
+            {
+              "colName": "Social Link",
+              "value": "https://github.com/johnpapa/angular-styleguide?tab=readme-ov-file, papalink"
+            },
+            {
+              "colName": "Name",
+              "value": "Truong Tai"
+            }
+          ]
+        },
+        {
+          "id": "52",
+          "data": [
+            {
+              "colName": "Married",
+              "value": null
+            },
+            {
+              "colName": "Age",
+              "value": 30
+            },
+            {
+              "colName": "Choice column",
+              "value": null
+            },
+            {
+              "colName": "Profile Link",
+              "value": null
+            },
+            {
+              "colName": "Social Link",
+              "value": "https://github.com/johnpapa/angular-styleguide?tab=readme-ov-file, papalink"
+            },
+            {
+              "colName": "Name",
+              "value": "Truong Tai"
+            }
+          ]
+        }
+      ],
+      "views": [],
+      "forms": []
+    }
+  ],
+  "favoriteLists": [],
+  "recentLists": [],
+  "templates": [
+    {
+      "id": "1",
+      "name": "Sample Template",
+      "columns": [
+        {
+          "id": "2",
+          "name": "Column 1",
+          "type": "Text",
+          "visible": true
+        },
+        {
+          "id": "3",
+          "name": "Column 2",
+          "type": "Number",
+          "visible": true
+        },
+        {
+          "id": "4",
+          "name": "Column 3",
+          "type": "Date",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Sample Template 2",
+      "columns": [
+        {
+          "id": "2",
+          "name": "Column 1",
+          "type": "Text",
+          "visible": true
+        },
+        {
+          "id": "3",
+          "name": "Column 2",
+          "type": "Number",
+          "visible": true
+        },
+        {
+          "id": "4",
+          "name": "Column 3",
+          "type": "Date",
+          "visible": true
+        }
+      ]
+    }
+  ]
+}
