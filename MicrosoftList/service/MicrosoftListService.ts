@@ -340,16 +340,24 @@ class MicrosoftListService {
             throw new Error(`Column with ID ${columnId} not found.`);
         }
 
+
+        // Update column in rows
+        list.rows.forEach(row => {
+            row.data.forEach(cell => {
+                if (cell.colName === column.name) {
+                    // Update colName and set value to null
+                    cell.colName = name;
+                    cell.value = null;
+                }
+            });
+        });
+
         // Update column properties
         column.name = name;
         column.type = ColumnType[type as keyof typeof ColumnType];
 
-        // Update column in rows
-        list.rows.forEach(row => {
-            if (row.data[columnId] !== undefined) {
-                row.data[columnId] = row.data[columnId]; // Ensure value is updated if necessary
-            }
-        });
+
+
 
         this.saveFile(this.model);
         return column;

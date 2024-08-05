@@ -6,8 +6,8 @@
       "columns": [
         {
           "id": "16",
-          "name": "Married",
-          "type": "Yes/No",
+          "name": "Full Name",
+          "type": "Text",
           "visible": true
         },
         {
@@ -51,8 +51,8 @@
           "id": "59",
           "data": [
             {
-              "colName": "Married",
-              "value": true
+              "colName": "Full Name",
+              "value": "Tai Dang"
             },
             {
               "colName": "Age",
@@ -72,7 +72,7 @@
             },
             {
               "colName": "Name",
-              "value": "Tai Dang"
+              "value": null
             }
           ]
         },
@@ -80,8 +80,8 @@
           "id": "123",
           "data": [
             {
-              "colName": "Married",
-              "value": true
+              "colName": "Full Name",
+              "value": null
             },
             {
               "colName": "Age",
@@ -101,7 +101,7 @@
             },
             {
               "colName": "Name",
-              "value": "Khoi Nguyen"
+              "value": null
             }
           ]
         },
@@ -109,7 +109,7 @@
           "id": "65",
           "data": [
             {
-              "colName": "Married",
+              "colName": "Full Name",
               "value": null
             },
             {
@@ -130,7 +130,7 @@
             },
             {
               "colName": "Name",
-              "value": "Truong Tai"
+              "value": null
             }
           ]
         },
@@ -138,7 +138,7 @@
           "id": "17",
           "data": [
             {
-              "colName": "Married",
+              "colName": "Full Name",
               "value": null
             },
             {
@@ -159,7 +159,7 @@
             },
             {
               "colName": "Name",
-              "value": "Truong Tai"
+              "value": null
             }
           ]
         },
@@ -167,7 +167,7 @@
           "id": "52",
           "data": [
             {
-              "colName": "Married",
+              "colName": "Full Name",
               "value": null
             },
             {
@@ -188,7 +188,7 @@
             },
             {
               "colName": "Name",
-              "value": "Truong Tai"
+              "value": null
             }
           ]
         }
