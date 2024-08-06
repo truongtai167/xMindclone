@@ -1,367 +1,411 @@
-import fs from 'fs';
+import sql from 'mssql';
+import { connect } from '../db'; // Adjust the path as necessary
 import { List } from "../model/List";
 import { MicrosoftList } from "../model/MicrosoftList";
-import { Column, columnCreationMapping, ColumnType } from '../model/Column';
+import { Column, ColumnConfig, columnCreationMapping, ColumnType, formatters } from '../model/Column';
 import { Row } from '../model/Row';
 import { Template } from '../model/Template';
+import { v4 as uuidv4 } from 'uuid'; // Import uuid for generating unique IDs
 
 class MicrosoftListService {
     private model: MicrosoftList;
-    private jsonFilePath: string = './MicrosoftList/loadList.json';
-    private templateFilePath: string = './MicrosoftList/template.json';
 
     constructor(model: MicrosoftList) {
         this.model = model;
     }
 
-    loadFile(): MicrosoftList {
-        const data = fs.readFileSync(this.jsonFilePath, 'utf8');
-        const jsonData = JSON.parse(data);
-        const templateData = fs.readFileSync(this.templateFilePath, 'utf8');
-        const templateJsonData = JSON.parse(templateData);
-
-        const lists = jsonData.lists.map((list: any) => this.initializeLists(list));
-        this.model = new MicrosoftList();
-        this.model.lists = lists;
-        this.initializeTemplates(templateJsonData);
-        this.saveFile(this.model);
-        return this.model;
+    private async executeQuery(query: string, params: any[] = []): Promise<any> {
+        const pool = await connect(); // Use the connect function from db.ts
+        const request = pool.request();
+        params.forEach(param => request.input(param.name, param.type, param.value));
+        return request.query(query);
     }
 
-    initializeTemplates(templateJsonData: { id: string, name: string, columns: { id: string, type: string, name: string }[] }[]): void {
-        this.model.templates = templateJsonData.map(t => {
-            const columns = t.columns.map(col => {
-                const ColumnClass = columnCreationMapping[col.type];
-                if (!ColumnClass) {
-                    throw new Error(`Unknown column type: ${col.type}`);
-                }
-                const columnInstance = new ColumnClass(col.name);
-                columnInstance.id = col.id;
-                return columnInstance;
-            });
+    async getLists(): Promise<any[]> {
+        // Query to get lists along with their columns and column settings
+        const query = `
+            SELECT 
+                l.id AS listId, 
+                l.name AS listName, 
+                c.id AS columnId,
+                c.name AS columnName,
+                c.type AS columnType,
+                cf.settingName AS settingName,
+                cf.settingValue AS settingValue
+            FROM Lists l
+            LEFT JOIN Columns c ON l.id = c.listId
+            LEFT JOIN ColumnConfigs cf ON c.id = cf.columnId
+        `;
 
-            return new Template(t.id, t.name, columns);
-        });
-    }
+        const result = await this.executeQuery(query);
 
-    initializeLists(json: any): List {
-        const list = new List(json.name);
-        list.id = json.id;
+        // Process the results to group columns and settings under their respective lists
+        const listsMap: { [key: string]: any } = {};
 
-        // Initialize columns
-        list.columns = json.columns.map((col: any) => {
-            // Get the Column class from the mapping
-            const ColumnClass = columnCreationMapping[col.type];
-            if (!ColumnClass) {
-                throw new Error(`Unknown column type: ${col.type}`);
+        result.recordset.forEach(row => {
+            if (!listsMap[row.listId]) {
+                listsMap[row.listId] = {
+                    id: row.listId,
+                    name: row.listName,
+                    columns: []
+                };
             }
 
-            // Create a new column instance
-            const columnInstance = new ColumnClass(col.name, col.choices || []);
+            if (row.columnId) {
+                // Find or create column
+                let column = listsMap[row.listId].columns.find(col => col.id === row.columnId);
+                if (!column) {
+                    column = {
+                        id: row.columnId,
+                        name: row.columnName,
+                        type: row.columnType,
+                        settings: []
+                    };
+                    listsMap[row.listId].columns.push(column);
+                }
 
-            columnInstance.id = col.id;
-            return columnInstance;
+                // Add settings to the column
+                if (row.settingName) {
+                    column.settings.push({
+                        name: row.settingName,
+                        value: row.settingValue
+                    });
+                }
+            }
         });
 
-        // Initialize rows
-        list.rows = json.rows.map((row: any) => {
-            // Create a mapping of column IDs to values
-            const datas = row.data.map(col => {
-                return {
-                    colName: col.colName,
-                    value: col.value
-                };
-            });
-            // Create the Row instance with the data
-            const rowInstance = new Row(datas);
-            rowInstance.id = row.id;
-            return rowInstance;
-        });
-        return list;
+        // Convert listsMap to an array of lists
+        return Object.values(listsMap);
     }
 
 
-    getLists() {
-        this.loadFile();
-        return this.model.lists;
-    }
-
-    getListById(listId: string): List | null {
-        this.loadFile();
-        const list = this.model.lists.find(l => l.id === listId);
-
-        if (!list) {
+    async getListById(listId: string): Promise<any> {
+        const result = await this.executeQuery('SELECT * FROM Lists WHERE id = @id', [{ name: 'id', type: sql.NVarChar, value: listId }]);
+        if (result.recordset.length === 0) {
             console.error(`List with ID ${listId} not found.`);
             return null;
         }
-        return list;
+        return result.recordset; // Directly return the recordset array
     }
 
-    getTemplates() {
-        this.loadFile();
-        return this.model.templates;
+    async getTemplates(): Promise<Template[]> {
+        const result = await this.executeQuery('SELECT * FROM Templates');
+        return result.recordset.map((row: any) => new Template(row.id, row.name, row.columns)); // Customize as per your actual schema
     }
 
-    saveFile(data: any): void {
-        const jsonData = JSON.stringify(data, null, 2);
-        fs.writeFileSync(this.jsonFilePath, jsonData, 'utf8');
-    }
-
-    createBlankList(name: string): List {
+    async createBlankList(name: string): Promise<any> {
         if (!name) {
             throw new Error("List name cannot be empty");
         }
-        const blanklist = new List(name);
-        this.model.lists.push(blanklist);
-        this.saveFile(this.model);
-        return blanklist;
+        const newId = uuidv4(); // Implement this function to generate unique IDs
+        const result = await this.executeQuery('INSERT INTO Lists (id, name) VALUES (@id, @name)', [
+            { name: 'id', type: sql.NVarChar, value: newId },
+            { name: 'name', type: sql.NVarChar, value: name }
+        ]);
+        return result.recordset
     }
 
-    createListFromTemplate(templateId: string, listName: string): List {
-        this.loadFile();
-        const template = this.model.templates.find(t => t.id === templateId);
-        if (!template) {
-            throw new Error(`Template with ID ${templateId} not found.`);
-        }
-        if (!listName) {
-            throw new Error("List name cannot be empty");
-        }
-        const newList = new List(listName, template.columns);
-        this.model.lists.push(newList);
-        this.saveFile(this.model);
-        return newList;
+    async deleteList(listId: string): Promise<void> {
+        await this.executeQuery('DELETE FROM Lists WHERE id = @id', [{ name: 'id', type: sql.NVarChar, value: listId }]);
     }
 
-    deleteList(listId: string): void {
-        const deletelist = this.model.lists.find(s => s.id === listId);
-        if (!deletelist) {
-            throw new Error(`List with ID ${listId} not found`);
+
+    async addColumn(listId: string, name: string, type: string, settings?: ColumnConfig[]
+    ): Promise<any> {
+        // Validate input parameters
+        if (!name || !type) {
+            throw new Error("Column name and type are required.");
         }
-        this.model.lists = this.model.lists.filter(s => s.id !== listId);
-        this.saveFile(this.model);
-    }
 
-    addColumn(listId: string, name: string, type: string, choices: any): Column | null {
-        this.loadFile();
+        // Convert column type from string to ColumnType enum
+        const columnType = ColumnType[type as keyof typeof ColumnType];
+        if (!columnType) {
+            throw new Error(`Invalid column type: ${type}`);
+        }
 
-        // Find the list by ID
-        const list = this.model.lists.find(l => l.id === listId);
-        if (!list) {
+        // Check if the list exists
+        const listResult = await this.executeQuery('SELECT * FROM Lists WHERE id = @id', [
+            { name: 'id', type: sql.NVarChar, value: listId }
+        ]);
+
+        if (listResult.recordset.length === 0) {
             throw new Error(`List with ID ${listId} not found.`);
         }
 
-        // Validate and convert column type
-        const columnType = ColumnType[type as keyof typeof ColumnType];
+        // Check if a column with the same name already exists
+        const columnExists = await this.executeQuery('SELECT * FROM Columns WHERE listId = @listId AND name = @name', [
+            { name: 'listId', type: sql.NVarChar, value: listId },
+            { name: 'name', type: sql.NVarChar, value: name }
+        ]);
 
-        const ColumnClass = columnCreationMapping[columnType];
-
-        const columnExists = list.columns.some(col => col.name === name);
-        if (columnExists) {
+        if (columnExists.recordset.length > 0) {
             throw new Error(`A column with the name "${name}" already exists.`);
         }
-        const parsedChoices = typeof choices === 'string'
-            ? choices.split(',').map(choice => choice.trim())
-            : choices;
 
-        const newColumn = new ColumnClass(name, parsedChoices);
+        // Generate a new ID for the column
+        const newColumnId = uuidv4();
 
-        // Add the new column to the list
-        list.columns.push(newColumn);
-        // Add the new column to each row
-        list.rows.forEach(row => {
-            row.data.push({
-                colName: newColumn.name,
-                value: null // Initialize value to null
-            });
-        });
+        // Insert the new column into the database
+        await this.executeQuery('INSERT INTO Columns (id, listId, name, type) VALUES (@id, @listId, @name, @type)', [
+            { name: 'id', type: sql.NVarChar, value: newColumnId },
+            { name: 'listId', type: sql.NVarChar, value: listId },
+            { name: 'name', type: sql.NVarChar, value: name },
+            { name: 'type', type: sql.NVarChar, value: columnType }
+        ]);
 
-        // Save the updated model
-        this.saveFile(this.model);
+        console.log(settings)
 
-        return newColumn;
-    }
-
-    deleteColumn(listId: string, columnId: string): void {
-        this.loadFile();
-        const list = this.model.lists.find(l => l.id === listId);
-
-        if (!list) {
-            throw new Error(`List with ID ${listId} not found.`);
+        // Insert column settings into the ColumnConfigs table if settings are provided
+        if (settings && settings.length > 0) {
+            for (const setting of settings) {
+                const settingValue = Array.isArray(setting.settingValue)
+                    ? setting.settingValue.join(',') // Convert array to comma-separated string
+                    : setting.settingValue;
+                await this.executeQuery('INSERT INTO ColumnConfigs (id, columnId, settingName, settingValue) VALUES (@id, @columnId, @settingName, @settingValue)', [
+                    { name: 'id', type: sql.NVarChar, value: uuidv4() },
+                    { name: 'columnId', type: sql.NVarChar, value: newColumnId },
+                    { name: 'settingName', type: sql.NVarChar, value: setting.settingName },
+                    { name: 'settingValue', type: sql.NVarChar, value: settingValue }
+                ]);
+            }
         }
-        list.columns = list.columns.filter(col => col.id !== columnId);
-        list.rows.forEach(row => {
-            row.data = row.data.filter(cv => cv.id !== columnId);
-        });
-        this.saveFile(this.model);
-    }
+        // Add the column to each row (assuming rows already exist in the list)
+        const rowsResult = await this.executeQuery('SELECT id FROM Rows WHERE listId = @listId', [
+            { name: 'listId', type: sql.NVarChar, value: listId }
+        ]);
 
-    addRow(listId: string, rowData: { colName: string, value: any }[]): Row | null {
-        this.loadFile();
-
-        // Find the list by ID
-        const list = this.model.lists.find(l => l.id === listId);
-        if (!list) {
-            throw new Error(`List with ID ${listId} not found.`);
+        for (const row of rowsResult.recordset) {
+            await this.executeQuery('INSERT INTO RowData (id, rowId, columnId, value) VALUES (@id, @rowId, @columnId, @value)', [
+                { name: 'id', type: sql.NVarChar, value: uuidv4() },
+                { name: 'rowId', type: sql.NVarChar, value: row.id },
+                { name: 'columnId', type: sql.NVarChar, value: newColumnId },
+                { name: 'value', type: sql.NVarChar, value: null } // Initialize value to null
+            ]);
         }
 
-        // Create a new row with column data
-        const newRowData = list.columns.map(col => {
-            // Find the corresponding value for the column name
-            const columnValue = rowData.find(data => data.colName === col.name);
-            return {
-                colName: col.name,
-                value: columnValue ? columnValue.value : null // Use the value if found, otherwise null
-            };
-        });
-
-        // Create and add the new row to the list
-        const newRow = new Row(newRowData);
-        list.rows.push(newRow);
-
-        // Save the updated model
-        this.saveFile(this.model);
-
-        return newRow;
+        return {
+            id: newColumnId,
+            listId: listId,
+            name: name,
+            type: columnType
+        };
     }
 
-    deleteRow(listId: string, rowId: string): void {
-        this.loadFile();
-        const list = this.model.lists.find(l => l.id === listId);
-        if (!list) {
+
+    async deleteColumn(listId: string, columnId: string): Promise<void> {
+        // Step 1: Remove the column from the Columns table
+        await this.executeQuery('DELETE FROM Columns WHERE id = @id', [
+            { name: 'id', type: sql.NVarChar, value: columnId }
+        ]);
+
+        // Step 2: Remove column data from each row
+        await this.executeQuery('DELETE FROM RowData WHERE columnId = @columnId', [
+            { name: 'columnId', type: sql.NVarChar, value: columnId }
+        ]);
+    }
+    async addRow(listId: string, columnValues: { [key: string]: any }): Promise<any> {
+        // Check if the list exists
+        const listResult = await this.executeQuery('SELECT * FROM Lists WHERE id = @id', [
+            { name: 'id', type: sql.NVarChar, value: listId }
+        ]);
+
+        if (listResult.recordset.length === 0) {
             throw new Error(`List with ID ${listId} not found.`);
         }
-        list.rows = list.rows.filter(row => row.id !== rowId);
-        this.saveFile(this.model);
+
+        // Generate a new ID for the row
+        const newRowId = uuidv4();
+
+        // Insert the new row into the Rows table
+        await this.executeQuery('INSERT INTO Rows (id, listId) VALUES (@id, @listId)', [
+            { name: 'id', type: sql.NVarChar, value: newRowId },
+            { name: 'listId', type: sql.NVarChar, value: listId }
+        ]);
+
+        // Retrieve column IDs for the specified list
+        const columnsResult = await this.executeQuery('SELECT id FROM Columns WHERE listId = @listId', [
+            { name: 'listId', type: sql.NVarChar, value: listId }
+        ]);
+
+        // Insert data into RowData for each column
+        for (const column of columnsResult.recordset) {
+            const columnId = column.id;
+            const value = columnValues[columnId] || null; // Use provided value or null if not provided
+
+            await this.executeQuery('INSERT INTO RowData (id, rowId, columnId, value) VALUES (@id, @rowId, @columnId, @value)', [
+                { name: 'id', type: sql.NVarChar, value: uuidv4() },
+                { name: 'rowId', type: sql.NVarChar, value: newRowId },
+                { name: 'columnId', type: sql.NVarChar, value: columnId },
+                { name: 'value', type: sql.NVarChar, value: value }
+            ]);
+        }
+
+
+
+        // Return the new row object
+        return {
+            id: newRowId,
+            listId: listId,
+            columnValues: columnValues
+        };
     }
 
-    searchRow(searchTerm: string, listId: string): Row[] {
-        this.loadFile();
-        const lowerCaseTerm = searchTerm.toLowerCase();
-        const list = this.model.lists.find(l => l.id === listId);
-        if (!list) {
-            throw new Error(`List with ID ${listId} not found.`);
+    async deleteRow(listId: string, rowId: string): Promise<void> {
+        // Validate input
+        if (!rowId) {
+            throw new Error("Row ID is required.");
         }
-        return list.rows.filter(row =>
-            row.data.some(columnData =>
-                // Ensure columnData.value is not null or undefined before converting to string
-                columnData.value?.toString().toLowerCase().includes(lowerCaseTerm)
-            )
-        );
-    }
 
-    filterRow(listId: string, colName: string, values: any[]): Row[] {
-        this.loadFile();
-        const list = this.model.lists.find(l => l.id === listId);
-        if (!list) {
-            throw new Error(`List with ID ${listId} not found.`);
-        }
-        return list.rows.filter(row => {
-            const columnData = row.data.find(data => data.colName === colName);
-            return columnData ? values.includes(columnData.value) : false;
-        });
-    }
+        // Check if the row exists
+        const rowResult = await this.executeQuery('SELECT * FROM Rows WHERE id = @id', [
+            { name: 'id', type: sql.NVarChar, value: rowId }
+        ]);
 
-    updateRowValue(listId: string, rowId: string, columnName: string, value: any): Row | null {
-        this.loadFile();
-
-        // Find the list by ID
-        const list = this.model.lists.find(l => l.id === listId);
-        if (!list) {
-            throw new Error(`List with ID ${listId} not found.`);
-        }
-        // Find the row by ID
-        const row = list.rows.find(r => r.id === rowId);
-        if (!row) {
+        if (rowResult.recordset.length === 0) {
             throw new Error(`Row with ID ${rowId} not found.`);
         }
-        // Update the row column value
-        const column = list.columns.find(col => col.name === columnName);
-        const columnData = row.data.find(d => d.colName === columnName);
-        if (!(column?.validateValue(value))) {
-            throw new Error(`Invalid value `);
-        }
-        columnData.value = value;
-        this.saveFile(this.model);
-        return row;
+
+        // Delete associated RowData entries
+        await this.executeQuery('DELETE FROM RowData WHERE rowId = @rowId', [
+            { name: 'rowId', type: sql.NVarChar, value: rowId }
+        ]);
+
+        // Delete the row
+        await this.executeQuery('DELETE FROM Rows WHERE id = @id', [
+            { name: 'id', type: sql.NVarChar, value: rowId }
+        ]);
     }
 
-    paginateRows(
+    async getRows(
         listId: string,
         page: number,
         limit: number,
         search?: string,
         colName?: string,
         values?: any[]
-    ) {
-        this.loadFile();
-        // Find the list by ID
-        const list = this.model.lists.find(l => l.id === listId);
-        if (!list) {
-            throw new Error(`List with ID ${listId} not found.`);
+    ): Promise<any> {
+        if (!listId || page <= 0 || limit <= 0) {
+            throw new Error("Valid list ID, page number, and limit are required.");
         }
 
-        // Get all rows
-        let rows = list.rows;
+        // Calculate offset for pagination
+        const offset = (page - 1) * limit;
 
-        // Apply search filter
+        // Base query to fetch rows with pagination
+        let rowsQuery = `
+            SELECT id
+            FROM Rows
+            WHERE listId = @listId
+        `;
+
+        // Add search filter if provided
         if (search) {
-            rows = this.searchRow(search, listId);
+            rowsQuery += ` AND EXISTS (
+                SELECT 1 FROM RowData
+                WHERE RowData.rowId = Rows.id
+                AND RowData.value LIKE '%' + @search + '%'
+            )`;
         }
 
-        // Apply column filter
+        // Add column filter if provided
         if (colName && values) {
-            rows = this.filterRow(listId, colName, values);
+            rowsQuery += ` AND EXISTS (
+                SELECT 1 FROM RowData
+                WHERE RowData.rowId = Rows.id
+                AND RowData.columnId = (SELECT id FROM Columns WHERE listId = @listId AND name = @colName)
+                AND RowData.value IN (${values.map((_, i) => `@value${i}`).join(', ')})
+            )`;
         }
 
-        // Paginate rows
-        const startIndex = (page - 1) * limit;
-        const paginatedRows = rows.slice(startIndex, startIndex + limit);
+        rowsQuery += `
+            ORDER BY id
+            OFFSET @offset ROWS
+            FETCH NEXT @limit ROWS ONLY
+        `;
 
+        // Build parameters for rows query
+        const params = [
+            { name: 'listId', type: sql.NVarChar, value: listId },
+            { name: 'offset', type: sql.Int, value: offset },
+            { name: 'limit', type: sql.Int, value: limit }
+        ];
+
+        if (search) {
+            params.push({ name: 'search', type: sql.NVarChar, value: search });
+        }
+
+        if (colName && values) {
+            params.push({ name: 'colName', type: sql.NVarChar, value: colName });
+            values.forEach((value, index) => {
+                params.push({ name: `value${index}`, type: sql.NVarChar, value });
+            });
+        }
+
+        // Execute the query to get row IDs
+        const rowsResult = await this.executeQuery(rowsQuery, params);
+        const rowIds = rowsResult.recordset.map((r: any) => r.id);
+
+        // Fetch row data for the retrieved rows
+        const dataQuery = `
+            SELECT rd.rowId, rd.columnId, rd.value, c.name AS columnName,c.type AS columnType
+            FROM RowData rd
+            JOIN Columns c ON rd.columnId = c.id
+            WHERE rd.rowId IN (${rowIds.map((_, i) => `@rowId${i}`).join(', ')})
+        `;
+
+        // Add parameters for row data query
+        rowIds.forEach((id, index) => {
+            params.push({ name: `rowId${index}`, type: sql.NVarChar, value: id });
+        });
+
+        const dataResult = await this.executeQuery(dataQuery, params);
+
+
+        // Aggregate the data
+        const rowsWithValues = dataResult.recordset.reduce((acc: any, row: any) => {
+            if (!acc[row.rowId]) {
+                acc[row.rowId] = { id: row.rowId, values: [] };
+            }
+            // Use the formatter based on column type
+            const formatter = formatters[row.columnType] || formatters['default'];
+            acc[row.rowId].values.push(formatter(row.value, row.columnName));
+            return acc;
+        }, {});
+
+        // Convert the result into the desired format
+        const formattedRows = Object.values(rowsWithValues);
         return {
-            total: rows.length,
             page,
             limit,
-            rows: paginatedRows
+            rows: formattedRows
         };
     }
 
-    updateColumn(listId: string, columnId: string, name: string, type: string): Column | null {
-        this.loadFile();
 
-        // Find the list by ID
-        const list = this.model.lists.find(l => l.id === listId);
-        if (!list) {
-            throw new Error(`List with ID ${listId} not found.`);
-        }
+    async updateRowData(
+        listId: string,
+        rowId: string,
+        columnId: string,
+        newValue: any
+    ): Promise<void> {
 
-        // Find the column by ID
-        const column = list.columns.find(col => col.id === columnId);
-        if (!column) {
-            throw new Error(`Column with ID ${columnId} not found.`);
-        }
+        // Convert the new value to string if it's not null
+        const valueToUpdate = newValue !== null ? newValue.toString() : null;
 
+        // Update the RowData
+        await this.executeQuery(
+            'UPDATE RowData SET value = @value WHERE rowId = @rowId AND columnId = @columnId',
+            [
+                { name: 'value', type: sql.NVarChar, value: valueToUpdate },
+                { name: 'rowId', type: sql.NVarChar, value: rowId },
+                { name: 'columnId', type: sql.NVarChar, value: columnId }
+            ]
+        );
 
-        // Update column in rows
-        list.rows.forEach(row => {
-            row.data.forEach(cell => {
-                if (cell.colName === column.name) {
-                    // Update colName and set value to null
-                    cell.colName = name;
-                    cell.value = null;
-                }
-            });
-        });
-
-        // Update column properties
-        column.name = name;
-        column.type = ColumnType[type as keyof typeof ColumnType];
-
-
-
-
-        this.saveFile(this.model);
-        return column;
+        // Optionally, you could return a success message or updated data
     }
+
+
 }
 
 export { MicrosoftListService };

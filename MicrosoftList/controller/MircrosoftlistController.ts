@@ -5,10 +5,10 @@ import { MicrosoftList } from '../model/MicrosoftList';
 const microsoftListService = new MicrosoftListService(new MicrosoftList());
 
 const MicrosoftListController = {
-    createBlankList: (req: Request, res: Response) => {
+    createBlankList: async (req: Request, res: Response) => {
         try {
             const { name } = req.body;
-            const list = microsoftListService.createBlankList(name);
+            const list = await microsoftListService.createBlankList(name);
             return res.status(200).json({
                 success: true,
                 response: list
@@ -21,26 +21,11 @@ const MicrosoftListController = {
         }
     },
 
-    createListFromTemplate: (req: Request, res: Response) => {
-        try {
-            const { templateId, name } = req.body;
-            const list = microsoftListService.createListFromTemplate(templateId, name);
-            return res.status(200).json({
-                success: true,
-                response: list
-            });
-        } catch (error: any) {
-            return res.status(400).json({
-                success: false,
-                error: error.message
-            });
-        }
-    },
 
-    deleteList: (req: Request, res: Response) => {
+    deleteList: async (req: Request, res: Response) => {
         try {
             const { id } = req.params;
-            microsoftListService.deleteList(id);
+            await microsoftListService.deleteList(id);
             return res.status(200).json({
                 success: true
             });
@@ -52,9 +37,9 @@ const MicrosoftListController = {
         }
     },
 
-    getAllLists: (req: Request, res: Response) => {
+    getAllLists: async (req: Request, res: Response) => {
         try {
-            const lists = microsoftListService.getLists();
+            const lists = await microsoftListService.getLists();
             return res.status(200).json({
                 success: true,
                 response: lists
@@ -67,16 +52,10 @@ const MicrosoftListController = {
         }
     },
 
-    getListById: (req: Request, res: Response) => {
+    getListById: async (req: Request, res: Response) => {
         try {
             const { listId } = req.params;
-            const list = microsoftListService.getListById(listId);
-            if (!list) {
-                return res.status(404).json({
-                    success: false,
-                    error: 'List not found'
-                });
-            }
+            const list = await microsoftListService.getListById(listId);
             return res.status(200).json({
                 success: true,
                 response: list

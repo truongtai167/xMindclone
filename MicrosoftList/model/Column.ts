@@ -155,6 +155,42 @@ class RatingColumn extends Column {
         return Number(value);
     }
 }
+interface ColumnConfig {
+    settingName: string;
+    settingValue: any;
+}
+
+const formatters: { [key: string]: (value: string, columnName: string) => any } = {
+    'Hyperlink': (value, columnName) => {
+        const [url, displayText] = value.split(','); // Assuming value is in "url,displayText" format
+        return { columnName, url, displayText };
+    },
+    // Add other column type formatters here
+    'Text': (value, columnName) => {
+        return { columnName, value };
+    },
+    'Choice': (value, columnName) => {
+        if (value) {
+            const choices = value.split(','); // Split the comma-separated choices
+            return { columnName, choices };
+        }
+        return { columnName, choices: [] }; // Default for null or undefined values
+    },
+    // Default formatter if none of the above match
+    'default': (value, columnName) => {
+        return { columnName, value };
+    }
+};
+
+const valueProcessors: { [key: string]: (value: string) => any } = {
+    'Choice': (value: string) => value.split(',').map(choice => choice.trim()).join(','),
+    'Hyperlink': (value: string) => {
+        const [url, displayText] = value.split(',');
+        return { url: url.trim(), displayText: displayText.trim() };
+    },
+    // Add other column type processors as needed
+};
+
 
 type ColumnConstructor = new (name: string, ...args: any[]) => Column;
 
@@ -172,4 +208,4 @@ const columnCreationMapping: Record<ColumnType, ColumnConstructor> = {
 };
 
 
-export { Column, TextColumn, ImageColumn, DateColumn, ChoiceColumn, PersonColumn, YesNoColumn, NumberColumn, HyperlinkColumn, RatingColumn, ColumnType, columnCreationMapping };
+export { Column, TextColumn, ImageColumn, DateColumn, ChoiceColumn, PersonColumn, YesNoColumn, NumberColumn, HyperlinkColumn, RatingColumn, ColumnType, columnCreationMapping, ColumnConfig, formatters, valueProcessors };

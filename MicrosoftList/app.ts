@@ -1,23 +1,40 @@
 import express from 'express';
+import cors from 'cors'
 import bodyParser from 'body-parser';
 import { MicrosoftListController } from '../MicrosoftList/controller/MircrosoftlistController';
 import { ListController } from './controller/ListController';
 import setupSwagger from '../swagger';
+import { connect } from './db'
 
 const app = express();
 const port = 3000;
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
+
+connect()
+    .then((connection) => {
+        console.log("Connected to the database.");
+    })
+    .catch((error) => {
+        console.log("Database connection failed!");
+        console.log(error);
+    });
+
+
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+});
+
 
 app.post('/api/lists/:id/col', ListController.addColumn);
 app.delete('/api/lists/:id/columns/:columnId', ListController.deleteColumn);
-app.post('/api/lists/row/:id', ListController.addRow);
+app.post('/api/lists/:id/row', ListController.addRow);
 app.delete('/api/lists/:listId/row/:rowId', ListController.deleteRow);
-app.get('/api/lists/:listId/search', ListController.searchRow);
-app.get('/api/lists/:listId/filter', ListController.filterRow);
-app.put('/api/lists/:listId/row/:rowId/col/', ListController.updateRowValue);
-app.get('/api/lists/:listId/rows', ListController.paginateRows);
-app.put('/api/lists/:listId/col/:colId', ListController.updateColumn);
+app.put('/api/lists/:listId/row/:rowId/col', ListController.updateRowData);
+app.get('/api/lists/:listId/rows', ListController.getRows);
+// app.put('/api/lists/:listId/col/:colId', ListController.updateColumn);
 
 
 
@@ -25,8 +42,8 @@ app.put('/api/lists/:listId/col/:colId', ListController.updateColumn);
 app.post('/api/lists', MicrosoftListController.createBlankList);
 app.get('/api/lists', MicrosoftListController.getAllLists);
 app.delete('/api/lists/:id', MicrosoftListController.deleteList);
-app.get('/api/lists/templates', MicrosoftListController.getAllTemplates);
-app.post('/api/lists/templates', MicrosoftListController.createListFromTemplate);
+// app.get('/api/lists/templates', MicrosoftListController.getAllTemplates);
+// app.post('/api/lists/templates', MicrosoftListController.createListFromTemplate);
 app.get('/api/lists/:listId', MicrosoftListController.getListById);
 
 
@@ -34,9 +51,6 @@ app.get('/api/lists/:listId', MicrosoftListController.getListById);
 
 setupSwagger(app);
 
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
 
 /**
  * @swagger
@@ -232,7 +246,7 @@ app.listen(port, () => {
  * /api/lists/{listId}/row/{rowId}:
  *   delete:
  *     summary: Delete a row from a list
- *     tags : [List] 
+ *     tags : [List]
  *     parameters:
  *       - in: path
  *         name: listId
@@ -270,81 +284,7 @@ app.listen(port, () => {
  *                 $ref: '#/components/schemas/Template'
  */
 
-/**
- * @swagger
- * /api/lists/{listId}/search:
- *   get:
- *     summary: Search rows in a list
- *     tags : [List]
- *     parameters:
- *       - in: query
- *         name: searchTerm
- *         required: true
- *         schema:
- *           type: string
- *         description: The term to search for
- *       - in: path
- *         name: listId
- *         required: true
- *         schema:
- *           type: string
- *         description: The ID of the list to search in
- *     responses:
- *       200:
- *         description: Rows matching the search term
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Row'
- *       400:
- *         description: Invalid input
- *       404:
- *         description: List not found
- */
 
-/**
- * @swagger
- * /api/lists/{listId}/filter:
- *   get:
- *     summary: Filter rows in a list
- *     tags : [List]
- *     parameters:
- *       - in: query
- *         name: colName
- *         required: true
- *         schema:
- *           type: string
- *         description: The column name to filter by
- *       - in: query
- *         name: values
- *         required: true
- *         schema:
- *           type: array
- *           items:
- *             type: string
- *         description: The values to filter by
- *       - in: path
- *         name: listId
- *         required: true
- *         schema:
- *           type: string
- *         description: The ID of the list to filter in
- *     responses:
- *       200:
- *         description: Rows matching the filter criteria
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Row'
- *       400:
- *         description: Invalid input
- *       404:
- *         description: List not found
- */
 /**
  * @swagger
  * /api/lists/templates:
