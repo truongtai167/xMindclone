@@ -80,17 +80,119 @@ class MicrosoftListService {
 
 
     async getListById(listId: string): Promise<any> {
-        const result = await this.executeQuery('SELECT * FROM Lists WHERE id = @id', [{ name: 'id', type: sql.NVarChar, value: listId }]);
-        if (result.recordset.length === 0) {
-            console.error(`List with ID ${listId} not found.`);
-            return null;
-        }
-        return result.recordset; // Directly return the recordset array
+        // Query to get a list by ID along with its columns and column settings
+        const query = `
+            SELECT 
+                l.id AS listId, 
+                l.name AS listName, 
+                c.id AS columnId,
+                c.name AS columnName,
+                c.type AS columnType,
+                cf.settingName AS settingName,
+                cf.settingValue AS settingValue
+            FROM Lists l
+            LEFT JOIN Columns c ON l.id = c.listId
+            LEFT JOIN ColumnConfigs cf ON c.id = cf.columnId
+            WHERE l.id = @listId
+        `;
+
+        const result = await this.executeQuery(query, [{ name: 'listId', type: sql.NVarChar, value: listId }]);
+
+        // Process the results to group columns and settings under their respective list
+        const listsMap: { [key: string]: any } = {};
+
+        result.recordset.forEach(row => {
+            if (!listsMap[row.listId]) {
+                listsMap[row.listId] = {
+                    id: row.listId,
+                    name: row.listName,
+                    columns: []
+                };
+            }
+
+            if (row.columnId) {
+                // Find or create column
+                let column = listsMap[row.listId].columns.find(col => col.id === row.columnId);
+                if (!column) {
+                    column = {
+                        id: row.columnId,
+                        name: row.columnName,
+                        type: row.columnType,
+                        settings: []
+                    };
+                    listsMap[row.listId].columns.push(column);
+                }
+
+                // Add settings to the column
+                if (row.settingName) {
+                    column.settings.push({
+                        name: row.settingName,
+                        value: row.settingValue
+                    });
+                }
+            }
+        });
+
+        // Return the processed list data
+        return listsMap[listId] || null; // Return null if the list is not found
     }
 
-    async getTemplates(): Promise<Template[]> {
-        const result = await this.executeQuery('SELECT * FROM Templates');
-        return result.recordset.map((row: any) => new Template(row.id, row.name, row.columns)); // Customize as per your actual schema
+
+    async getTemplates(): Promise<any> {
+        // Query to get all templates along with their columns and column settings
+        const query = `
+  SELECT 
+      t.id AS templateId, 
+      t.name AS templateName, 
+      c.id AS columnId,
+      c.name AS columnName,
+      c.type AS columnType,
+      cf.settingName AS settingName,
+      cf.settingValue AS settingValue
+  FROM Templates t
+  LEFT JOIN TemplateColumns c ON t.id = c.templateId
+  LEFT JOIN ColumnConfigs cf ON c.id = cf.columnId
+`;
+
+        const result = await this.executeQuery(query);
+
+        // Process the results to group columns and settings under their respective templates
+        const templatesMap: { [key: string]: any } = {};
+
+        result.recordset.forEach(row => {
+            if (!templatesMap[row.templateId]) {
+                templatesMap[row.templateId] = {
+                    id: row.templateId,
+                    name: row.templateName,
+                    columns: []
+                };
+            }
+
+            if (row.columnId) {
+                // Find or create column
+                let column = templatesMap[row.templateId].columns.find(col => col.id === row.columnId);
+                if (!column) {
+                    column = {
+                        id: row.columnId,
+                        name: row.columnName,
+                        type: row.columnType,
+                        settings: []
+                    };
+                    templatesMap[row.templateId].columns.push(column);
+                }
+
+                // Add settings to the column
+                if (row.settingName) {
+                    column.settings.push({
+                        name: row.settingName,
+                        value: row.settingValue
+                    });
+                }
+            }
+        });
+
+        // Return the processed templates data
+        return Object.values(templatesMap);
     }
 
     async createBlankList(name: string): Promise<any> {
@@ -404,8 +506,94 @@ class MicrosoftListService {
 
         // Optionally, you could return a success message or updated data
     }
+    async createListFromTemplate(templateId: string, listName: string): Promise<any> {
+        // Step 1: Retrieve the template by ID
+        const templateQuery = `
+            SELECT 
+                t.id AS templateId, 
+                t.name AS templateName, 
+                c.id AS columnId,
+                c.name AS columnName,
+                c.type AS columnType,
+                cf.settingName AS settingName,
+                cf.settingValue AS settingValue
+            FROM Templates t
+            LEFT JOIN TemplateColumns c ON t.id = c.templateId
+            LEFT JOIN ColumnConfigs cf ON c.id = cf.columnId
+            WHERE t.id = @templateId
+        `;
+
+        const templateResult = await this.executeQuery(templateQuery, [{ name: 'templateId', type: sql.NVarChar, value: templateId }]);
+        const templateData = templateResult.recordset;
+
+        if (templateData.length === 0) {
+            throw new Error(`Template with ID ${templateId} not found.`);
+        }
+
+        // Step 2: Create a new list with the specified name
+        const newListId = uuidv4(); // Assuming you're using the uuid library
+
+        // Step 2b: Create a new list with the specified name and generated ID
+        const newListQuery = `
+            INSERT INTO Lists (id, name)
+            VALUES (@id, @listName)
+        `;
+
+        await this.executeQuery(newListQuery, [
+            { name: 'id', type: sql.sql.NVarChar, value: newListId },
+            { name: 'listName', type: sql.NVarChar, value: listName }
+        ]);
 
 
+        // Step 3: Copy columns from the template to the new list
+        const columns = templateData.filter(row => row.columnId);
+
+        for (const column of columns) {
+            const insertColumnQuery = `
+                INSERT INTO Columns (id,listId, name, type)
+                VALUES (@id,@listId, @name, @type)
+            `;
+
+            await this.executeQuery(insertColumnQuery, [
+                { name: 'id', type: sql.NVarChar, value: uuidv4() },
+                { name: 'listId', type: sql.NVarChar, value: newListId },
+                { name: 'name', type: sql.NVarChar, value: column.columnName },
+                { name: 'type', type: sql.NVarChar, value: column.columnType }
+            ]);
+
+            // Add column settings
+            if (column.settingName) {
+                const columnId = column.columnId; // Assuming you have a way to get the new columnId, or it’s available in the templateData
+                const insertSettingQuery = `
+                    INSERT INTO ColumnConfigs (columnId, settingName, settingValue)
+                    VALUES (@columnId, @settingName, @settingValue)
+                `;
+
+                await this.executeQuery(insertSettingQuery, [
+                    { name: 'columnId', type: sql.NVarChar, value: columnId },
+                    { name: 'settingName', type: sql.NVarChar, value: column.settingName },
+                    { name: 'settingValue', type: sql.NVarChar, value: column.settingValue }
+                ]);
+            }
+        }
+
+        return { id: newListId, name: listName };
+    }
+
+    async updateColumn(listId: string, columnId: string, name: string, type: string): Promise<any> {
+        const updateColumnQuery = `
+            UPDATE Columns
+            SET name = @name, type = @type
+            WHERE id = @columnId AND listId = @listId
+        `;
+        await this.executeQuery(updateColumnQuery, [
+            { name: 'name', type: sql.NVarChar, value: name },
+            { name: 'type', type: sql.NVarChar, value: type },
+            { name: 'columnId', type: sql.NVarChar, value: columnId },
+            { name: 'listId', type: sql.NVarChar, value: listId }
+        ]);
+        return { listId, columnId, name, type };
+    }
 }
 
 export { MicrosoftListService };

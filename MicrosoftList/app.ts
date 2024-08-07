@@ -38,12 +38,11 @@ app.get('/api/lists/:listId/rows', ListController.getRows);
 
 
 
-
 app.post('/api/lists', MicrosoftListController.createBlankList);
 app.get('/api/lists', MicrosoftListController.getAllLists);
 app.delete('/api/lists/:id', MicrosoftListController.deleteList);
-// app.get('/api/lists/templates', MicrosoftListController.getAllTemplates);
-// app.post('/api/lists/templates', MicrosoftListController.createListFromTemplate);
+app.get('/api/lists/templates', MicrosoftListController.getAllTemplates);
+app.post('/api/lists/templates', MicrosoftListController.createListFromTemplate);
 app.get('/api/lists/:listId', MicrosoftListController.getListById);
 
 

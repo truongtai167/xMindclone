@@ -113,22 +113,22 @@ const ListController = {
         }
     },
 
-    //     updateColumn: (req: Request, res: Response) => {
-    //         try {
-    //             const { listId, colId } = req.params;
-    //             const { name, type } = req.body;
-    //             const updatedColumn = microsoftListService.updateColumn(listId, colId, name, type);
-    //             return res.status(200).json({
-    //                 success: true,
-    //                 response: updatedColumn
-    //             });
-    //         } catch (error: any) {
-    //             return res.status(400).json({
-    //                 success: false,
-    //                 error: error.message
-    //             });
-    //         }
-    //     }
+    updateColumn: (req: Request, res: Response) => {
+        try {
+            const { listId, colId } = req.params;
+            const { name, type } = req.body;
+            const updatedColumn = microsoftListService.updateColumn(listId, colId, name, type);
+            return res.status(200).json({
+                success: true,
+                response: updatedColumn
+            });
+        } catch (error: any) {
+            return res.status(400).json({
+                success: false,
+                error: error.message
+            });
+        }
+    }
 }
 
 export { ListController };
